@@ -4,7 +4,7 @@ My business case for the **Vodafone Business AI Academy** assessment (October 20
 
 > This is my own submission, not an official Vodafone plan. Every figure is an assumption to test in a pilot unless a source is given.
 
-📄 [The 6-slide deck (PDF)](deck/AI-Concierge-business-case-deck.pdf) · 📊 [The 12-month Excel model](model/AI-Concierge-12-month-model.xlsx) · 🖼️ [All 7 product wireframes (PDF)](wireframes/AI-Concierge-wireframes.pdf)
+▶️ **[Try the working prototype](https://cyperry.github.io/ai-concierge-sme-business-case/prototype/)** · 📄 [The 6-slide deck (PDF)](deck/AI-Concierge-business-case-deck.pdf) · 📊 [The 12-month Excel model](model/AI-Concierge-12-month-model.xlsx) · 🖼️ [All 7 product wireframes (PDF)](wireframes/AI-Concierge-wireframes.pdf)
 
 ---
 
@@ -26,6 +26,22 @@ An AI agent that works on the SME's own phone line and WhatsApp. It:
 It's built for any phone-heavy small business. A restaurant and a clinic are used as worked examples below.
 
 The strategy is to **not build the full hub first**. Launch one product SMEs find hard to say no to, then add services only once the previous phase has proved itself.
+
+## Try the prototype
+
+**[Open the prototype in your browser](https://cyperry.github.io/ai-concierge-sme-business-case/prototype/)**. It needs no setup: it starts in offline demo mode.
+
+[![The prototype: a customer orders koshary on WhatsApp in Egyptian Arabic, the assistant prices it from the owner's menu, and the order lands on the owner's dashboard](images/prototype-demo.png)](https://cyperry.github.io/ai-concierge-sme-business-case/prototype/)
+
+The screen has three panels:
+
+1. **What the customer sees:** a phone call or WhatsApp chat with the business, in Egyptian Arabic.
+2. **What the assistant does:** each step it takes, including the tools it calls. Prices come from the owner's menu, never from the AI.
+3. **What the owner sees:** the dashboard, with new orders, bookings and anything that needs staff.
+
+**To try it:** pick Zaatar Kitchen (restaurant) or Dr. Ahmed Clinic, choose phone call or WhatsApp, then click the demo shortcuts under the phone to place an order or book a visit.
+
+**Live AI mode:** open ⚙ Settings and paste your own Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey). The assistant then runs on Gemini, including live voice calls through your microphone. Your key stays in your browser and isn't sent anywhere except Google.
 
 ## Product screens
 
