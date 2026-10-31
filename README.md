@@ -1,8 +1,8 @@
 # AI Concierge for Egyptian SMEs: a 12-month business case
 
-My business case for the **Vodafone Business AI Academy** assessment (October 2026): how Vodafone Egypt could launch an AI agent that answers the calls and WhatsApp messages small businesses miss, then grow it into an AI services hub for SMEs.
+My business case for **AI Concierge** (October 2026): how Vodafone Egypt could launch an AI agent that answers the calls and WhatsApp messages small businesses miss, then grow it into an AI services hub for SMEs.
 
-> This is my own submission, not an official Vodafone plan. Every figure is an assumption to test in a pilot unless a source is given.
+> This is my own independent case study, not an official Vodafone plan. Every figure is an assumption to test in a pilot unless a source is given.
 
 ▶️ **[Try the working prototype](https://cyperry.github.io/ai-concierge-sme-business-case/prototype/)** · 📄 [The 6-slide deck (PDF)](deck/AI-Concierge-business-case-deck.pdf) · 📊 [The 12-month Excel model](model/AI-Concierge-12-month-model.xlsx) · 🖼️ [All 7 product wireframes (PDF)](wireframes/AI-Concierge-wireframes.pdf)
 
@@ -82,7 +82,7 @@ The other five screens:
 | Contribution per customer per month | EGP 525 | about EGP 1,190 |
 | **Contribution margin** | **35%** | **about 48%** |
 
-The first month is free. Extra conversations cost EGP 3 each, which the model leaves out of revenue to stay conservative.
+The first month is free. Extra conversations cost EGP 7 each. That's deliberately above Plus's rate (about EGP 3.6 per conversation), so a business using more than about 440 conversations a month is better off upgrading to Plus than paying for extras. The model leaves extra-conversation revenue out to stay conservative.
 
 Where the Essential fee goes each month: EGP 1,500 fee, minus AI usage 350, calls and WhatsApp 100, platform licence 200, support 100, onboarding 100 and sales commission 125 (one-off costs spread over 12 months), leaves **EGP 525**. That's before Vodafone's fixed costs, so it's contribution, not profit.
 

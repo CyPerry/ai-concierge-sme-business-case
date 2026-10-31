@@ -1,0 +1,1649 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SME Assistant Prototype</title>
+<style>
+:root{--red:#0b2a5b;--dark:#25282b;--grey:#5f6368;--line:#e3e3e3;--bg:#eef2f8;--card:#fff;--green:#137333;--wa:#075e54}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Segoe UI",system-ui,-apple-system,Tahoma,"Noto Sans Arabic",Arial,sans-serif;color:var(--dark);background:var(--bg);font-size:14px;overflow:hidden}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,textarea,select{font:inherit;color:inherit}
+.ar{direction:rtl;font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif}
+/* top bar */
+.top{height:54px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 18px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;white-space:nowrap}
+.logo i{width:20px;height:20px;border-radius:50%;background:var(--red);display:block}
+.logo small{font-weight:400;color:var(--grey);font-size:12px}
+.seg{display:flex;background:#eef0f2;border-radius:10px;padding:3px}
+.seg button{padding:6px 12px;border-radius:8px;font-size:13px;color:var(--grey);font-weight:600;white-space:nowrap}
+.seg button.on{background:#fff;color:var(--dark);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.sp{flex:1}
+.pill{font-size:12px;font-weight:600;padding:5px 11px;border-radius:14px;white-space:nowrap;cursor:pointer}
+.pill.live{background:#e6f4ea;color:var(--green)}.pill.off{background:#fff4e5;color:#b06000}
+.btn{border:1px solid #dadce0;border-radius:8px;padding:6px 11px;font-size:12.5px;font-weight:600;color:#3c4043;background:#fff;white-space:nowrap}
+.btn:hover{background:#f6f6f6}
+.btn.red{background:var(--red);border-color:#1e4e9c;color:#fff}.btn.red:hover{background:#071d40}
+.btn.dark{background:var(--dark);border-color:var(--dark);color:#fff}
+.btn.sm{padding:4px 9px;font-size:12px}
+/* layout */
+.cols{height:calc(100vh - 54px);display:grid;grid-template-columns:380px 300px minmax(0,1fr);gap:14px;padding:12px 14px}
+.cols.nobrain{grid-template-columns:380px minmax(0,1fr)}
+.cols.nobrain #brainCol{display:none}
+.col{min-height:0;display:flex;flex-direction:column}
+.ct{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:#1e4e9c;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.ct b{background:var(--red);color:#fff;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:0}
+.ct .x{margin-left:auto;color:var(--grey);font-weight:600;text-transform:none;letter-spacing:0;font-size:11.5px}
+/* customer column */
+.ctrl{display:flex;gap:6px;align-items:center;margin-bottom:8px;font-size:12px;color:var(--grey);flex-wrap:wrap}
+.chipb{background:#fff;border:1px solid #dadce0;border-radius:12px;padding:3px 10px;font-size:12px;color:var(--grey)}
+.chipb.on{border-color:var(--dark);color:var(--dark);font-weight:600}
+.phone{flex:1;min-height:0;width:340px;margin:0 auto;border-radius:36px;background:#111;padding:10px;box-shadow:0 6px 20px rgba(0,0,0,.18);display:flex}
+.scr{flex:1;border-radius:27px;overflow:hidden;background:#efe7dc;display:flex;flex-direction:column;min-height:0;position:relative}
+.wa{background:var(--wa);color:#fff;padding:18px 12px 9px;display:flex;align-items:center;gap:9px;flex:0 0 auto}
+.av{width:34px;height:34px;border-radius:50%;background:#f4c27a;display:flex;align-items:center;justify-content:center;font-weight:700;color:#7a4b00;font-size:13px;flex:0 0 auto}
+.wa .n{font-weight:600;font-size:14.5px}.wa .s{font-size:11px;opacity:.8}
+.wa .ic{margin-left:auto;font-size:17px}
+.msgs{flex:1;overflow-y:auto;padding:10px 9px;display:flex;flex-direction:column;gap:6px;direction:rtl}
+.m{max-width:84%;padding:5px 9px 3px;border-radius:9px;font-size:13.5px;line-height:1.55;box-shadow:0 1px 1px rgba(0,0,0,.08);white-space:pre-wrap;word-wrap:break-word}
+.m small{display:block;text-align:left;direction:ltr;font-size:10px;color:#667781;margin-top:1px}
+.m .who{display:block;font-size:10.5px;font-weight:700;color:#b06000;direction:ltr;text-align:right}
+.m.me{background:#d9fdd3;align-self:flex-start}
+.m.bz{background:#fff;align-self:flex-end}
+.m.staff{background:#fff;align-self:flex-end;border-right:4px solid #f5a623}
+.m.conf{background:#fff;align-self:flex-end;border-right:4px solid #25d366}
+.m.sys{align-self:center;background:#e1f2fb;color:#3c4043;font-size:11.5px;direction:ltr;text-align:center;max-width:92%}
+.typing{align-self:flex-end;background:#fff;border-radius:9px;padding:8px 12px;display:flex;gap:4px}
+.typing i{width:6px;height:6px;border-radius:50%;background:#9aa0a6;animation:bl 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,80%,100%{opacity:.3}40%{opacity:1}}
+.inp{display:flex;align-items:flex-end;gap:7px;padding:7px;flex:0 0 auto}
+.inp textarea{overflow:hidden;flex:1;border:0;border-radius:20px;min-height:38px;max-height:90px;padding:9px 14px;resize:none;outline:none;direction:rtl;font-size:13.5px}
+.round{width:38px;height:38px;border-radius:50%;background:#00a884;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 auto}
+.round.rec{background:var(--red);animation:pu 1s infinite}
+@keyframes pu{50%{box-shadow:0 0 0 6px rgba(11,42,91,.25)}}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;justify-content:center;flex:0 0 auto}
+.chips button{font-size:11.5px;background:#fff;border:1px dashed #b9bcc0;border-radius:12px;padding:3px 9px;color:#3c4043}
+.chips button:hover{border-color:var(--dark)}
+.chips .lbl{font-size:11px;color:var(--grey);width:100%;text-align:center}
+/* call screen */
+.call{background:linear-gradient(180deg,#1f2a2e,#0f1416);color:#fff}
+.ch{text-align:center;padding:28px 0 8px;flex:0 0 auto}
+.bigav{width:66px;height:66px;border-radius:50%;background:#f4c27a;color:#7a4b00;font-weight:700;font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
+.cn{font-size:19px;font-weight:600}.cs{font-size:12.5px;opacity:.75;margin-top:2px}
+.wave{display:flex;gap:4px;justify-content:center;align-items:center;height:28px;margin-top:10px}
+.wave i{width:4px;height:6px;border-radius:2px;background:#5f6368;display:block;transition:height .12s}
+.wave.on i{background:#25d366}
+.spk{font-size:11.5px;color:#7ee2a8;margin-top:4px;min-height:16px}
+.cap{flex:1;min-height:0;margin:4px 10px;background:rgba(255,255,255,.07);border-radius:14px;padding:9px 11px;display:flex;flex-direction:column;gap:6px;direction:rtl;overflow-y:auto}
+.capt{direction:ltr;font-size:10px;letter-spacing:.08em;opacity:.55}
+.l{font-size:13px;line-height:1.5;opacity:.9}
+.l b{font-size:10.5px;display:block;opacity:.75;font-weight:600;direction:ltr;text-align:right}
+.l.c b{color:#9fd4ff}.l.a b{color:#7ee2a8}
+.l.last{opacity:1;background:rgba(37,211,102,.14);border-radius:8px;padding:3px 7px}
+.ctl{display:flex;justify-content:space-around;padding:10px 20px 18px;flex:0 0 auto}
+.ctl button{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;color:#fff}
+.ctl small{font-size:9px;opacity:.75;margin-top:1px}
+.ctl .end{background:#e53935}.ctl .go{background:#25d366}
+.ctl button.act{background:#fff;color:#111}
+.dial{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#fff;text-align:center;padding:20px}
+.dial .num{font-size:13px;opacity:.7}
+.dial .hint{font-size:12px;opacity:.6;max-width:240px;line-height:1.5}
+.bigcall{width:68px;height:68px;border-radius:50%;background:#25d366;font-size:28px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 0 0 0 rgba(37,211,102,.5);animation:pu2 2s infinite}
+@keyframes pu2{70%{box-shadow:0 0 0 14px rgba(37,211,102,0)}}
+.after{margin-top:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:12px;line-height:1.5;flex:0 0 auto}
+/* brain column */
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+.small{font-size:11.5px;color:var(--grey)}
+.src{display:flex;flex-direction:column;gap:5px;margin-top:7px}
+.src div{display:flex;justify-content:space-between;font-size:12.5px;background:#f4f4f4;border-radius:7px;padding:5px 9px}
+.logcard{margin-top:10px;flex:1;min-height:0;display:flex;flex-direction:column}
+.log{flex:1;overflow-y:auto;margin-top:8px}
+.st{display:flex;gap:9px;font-size:12.5px;line-height:1.4;padding-bottom:10px;position:relative;animation:fi .3s}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}}
+.st:before{content:'';position:absolute;left:10px;top:22px;bottom:0;width:2px;background:#ececec}
+.st:last-child:before{display:none}
+.st i{flex:0 0 22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:11px;font-weight:700;color:#fff;z-index:1}
+.st .t{color:var(--grey);font-size:11px;word-break:break-word}
+code{font-family:Consolas,ui-monospace,monospace;font-size:11.5px;background:#e9eef6;color:#071d40;padding:1px 4px;border-radius:4px}
+/* owner column */
+.tabs{display:flex;gap:3px;margin-bottom:10px;flex-wrap:wrap;flex:0 0 auto}
+.tabs button{font-size:13px;font-weight:600;color:var(--grey);padding:6px 12px;border-radius:8px;position:relative}
+.tabs button.on{background:var(--dark);color:#fff}
+.tabs button .dot{position:absolute;top:2px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--red)}
+.pane{flex:1;min-height:0;overflow-y:auto;padding-right:2px}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.kp div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.kp b{display:block;font-size:23px;color:#1e4e9c;line-height:1.2}
+.kp span{font-size:11.5px;color:var(--grey)}
+.kp .bump b{animation:bump .8s}
+@keyframes bump{30%{transform:scale(1.25)}}
+.ord{margin-top:10px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 13px}
+.ord.new{border:2px solid var(--red);animation:glow 1.4s 2}
+@keyframes glow{50%{box-shadow:0 0 0 5px rgba(11,42,91,.18)}}
+.ord .h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap}
+.tag.new{background:var(--red);color:#fff}.tag.prep{background:#e8f0fe;color:#1a56c4}.tag.out{background:#fff4e5;color:#b06000}.tag.done{background:#e6f4ea;color:var(--green)}
+.lines{font-size:13px;margin:7px 0;display:grid;grid-template-columns:1fr auto;row-gap:2px}
+.acc{display:flex;gap:7px;margin-top:7px;flex-wrap:wrap}
+.alert{margin-top:10px;background:#fff4e5;border:1px solid #f5c26b;border-radius:12px;padding:9px 13px;font-size:12.5px;display:flex;gap:10px;align-items:center}
+.alert b{color:#b06000}
+.list{margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.row{display:grid;grid-template-columns:52px 104px minmax(0,1fr) 104px;align-items:center;gap:6px;padding:7px 12px;border-top:1px solid #f0f0f0;font-size:12.5px}
+.row.hd{border-top:0;font-size:11px;color:var(--grey);font-weight:600;background:#fafafa}
+.row.click{cursor:pointer}.row.click:hover{background:#fafafa}
+.row .cv{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{font-size:11px;font-weight:600;padding:3px 8px;border-radius:10px;text-align:center;white-space:nowrap}
+.g{background:#e6f4ea;color:var(--green)}.b{background:#e8f0fe;color:#1a56c4}.o{background:#fff4e5;color:#b06000}.r{background:#e9eef6;color:#071d40}
+.sec{font-size:13px;font-weight:700;margin:14px 0 6px}
+table.t{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12.5px}
+table.t th{background:#fafafa;color:var(--grey);font-size:11px;text-align:left;padding:7px 9px;font-weight:600}
+table.t td{border-top:1px solid #f0f0f0;padding:6px 9px;vertical-align:middle}
+table.t input{width:68px;border:1px solid #dadce0;border-radius:6px;padding:3px 6px;text-align:right}
+table.t input.w{width:100%;text-align:left}
+.field{display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:center;margin-bottom:6px;font-size:12.5px}
+.field input,.field textarea{border:1px solid #dadce0;border-radius:7px;padding:5px 8px;width:100%}
+.note{font-size:11.5px;color:var(--grey);background:#f1f3f4;border-radius:8px;padding:7px 10px;margin:8px 0}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:5px}
+.slot{font-size:12px;border-radius:7px;padding:5px;text-align:center;border:1px solid var(--line);background:#fff}
+.slot.booked{background:#f1f3f4;color:#9aa0a6;text-decoration:line-through}
+.slot.past{background:#fafafa;color:#c4c7c5}
+.slot.live{background:var(--red);color:#fff;border-color:#1e4e9c;font-weight:600;text-decoration:none}
+.slot.free{border-color:#a8dab5;color:var(--green)}
+.days{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.radio{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.radio label{display:flex;gap:8px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 10px;cursor:pointer}
+.radio label.on{border-color:var(--dark)}
+/* report */
+.rep{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.rep .hd2{padding:13px 16px 8px;display:flex;justify-content:space-between;align-items:flex-start}
+.rep .k1{font-size:11.5px;font-weight:600;color:var(--grey);letter-spacing:.04em;text-transform:uppercase}
+.rep .k2{font-size:18px;font-weight:700}
+.rep .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 16px 8px}
+.rep .k{border-radius:10px;background:#f4f4f4;padding:8px 11px}
+.rep .k b{display:block;font-size:22px;color:#1e4e9c}.rep .k span{font-size:12px;color:#3c4043}
+.bars{display:flex;align-items:flex-end;gap:8px;height:70px;padding:0 16px}
+.bars div{flex:1;background:var(--red);border-radius:4px 4px 0 0;position:relative}
+.bars div span{position:absolute;bottom:-17px;left:0;right:0;text-align:center;font-size:10.5px;color:var(--grey)}
+.rep .foot{background:var(--dark);color:#fff;padding:10px 16px;font-size:13px;margin-top:26px}
+.rep .foot b{color:#9db8e3}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
+.modal.on{display:flex}
+.box{background:#fff;border-radius:14px;width:560px;max-width:94vw;max-height:90vh;overflow-y:auto;padding:18px 20px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.box h3{font-size:17px;margin-bottom:4px}
+.box .x2{float:right;font-size:20px;color:var(--grey)}
+.box label.f{display:block;font-size:12.5px;font-weight:600;margin:12px 0 4px}
+.box input[type=password],.box input[type=text],.box select{width:100%;border:1px solid #dadce0;border-radius:8px;padding:7px 10px}
+.okmsg{font-size:12.5px;margin-top:8px;padding:7px 10px;border-radius:8px}
+.okmsg.ok{background:#e6f4ea;color:var(--green)}.okmsg.bad{background:#e9eef6;color:#071d40}
+.drawer .tr{max-height:46vh;overflow-y:auto;background:#efe7dc;border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:5px;direction:rtl}
+.wapre{background:#efe7dc;border-radius:12px;padding:12px;direction:rtl}
+.wapre .m{max-width:100%}
+/* toast */
+#toasts{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:6px;z-index:60;align-items:center}
+.toast{background:var(--dark);color:#fff;font-size:13px;padding:8px 14px;border-radius:9px;box-shadow:0 4px 14px rgba(0,0,0,.25);animation:fi .25s;max-width:560px}
+.toast.warn{background:#b06000}
+.howgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;font-size:12.5px;line-height:1.5}
+.howgrid div{background:#f6f6f6;border-radius:10px;padding:10px}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;font-size:12px}
+.flow span{background:#e9eef6;color:#071d40;border-radius:8px;padding:5px 8px;font-weight:600}
+@media print{body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:absolute;left:0;top:0;width:100%}body{overflow:visible;background:#fff}}
+@media (max-width:1300px){.cols{grid-template-columns:350px 260px minmax(0,1fr)}.phone{width:320px}.cols.nobrain{grid-template-columns:350px minmax(0,1fr)}}
+
+@media (max-width:1500px){.logo small{display:none}.top{gap:9px;padding:0 12px}.btn{padding:6px 9px}}
+@media (max-width:1250px){.cols{grid-template-columns:330px 250px minmax(0,1fr);gap:10px;padding:10px}.cols.nobrain{grid-template-columns:340px minmax(0,1fr)}.phone{width:310px}.top .btn{font-size:12px}#btnHow{display:none}}
+@media (max-width:900px){body{overflow:auto}.top{overflow-x:auto;white-space:nowrap;scrollbar-width:none}.top::-webkit-scrollbar{display:none}.cols,.cols.nobrain{height:auto;grid-template-columns:minmax(0,1fr);gap:16px;padding:10px}#custCol{height:700px}#brainCol{height:560px}#ownerCol{min-height:640px}.phone{width:min(340px,100%)}.kp{grid-template-columns:repeat(2,1fr)}.row{grid-template-columns:44px 84px minmax(0,1fr)}.row>:nth-child(4){grid-column:2/-1}.field{grid-template-columns:1fr}.howgrid,.rep .grid{grid-template-columns:1fr}}
+
+</style></head><body>
+<header class="top">
+  <div class="logo"><i></i>SME Assistant <small>prototype · built on the Gemini API</small></div>
+  <div class="seg" id="bizSeg">
+    <button data-biz="restaurant">🍽 Zaatar Kitchen</button>
+    <button data-biz="clinic">🩺 Dr. Ahmed Clinic</button>
+  </div>
+  <div class="sp"></div>
+  <span id="modePill" class="pill"></span>
+  <button class="btn" id="btnBrain">Hide middle panel</button>
+  <button class="btn" id="btnHow">How it works</button>
+  <button class="btn" id="btnSettings">⚙ Settings</button>
+  <button class="btn" id="btnReset">↺ Reset demo</button>
+</header>
+<main class="cols" id="cols">
+  <section class="col" id="custCol"></section>
+  <section class="col" id="brainCol"></section>
+  <section class="col" id="ownerCol"></section>
+</main>
+<div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
+<div id="toasts"></div>
+<div id="printArea"></div>
+
+<script>
+// ===================================================================
+// DATA: approved information for the two example businesses
+// ===================================================================
+const DEFAULT_INFO = {
+  restaurant: {
+    name: 'Zaatar Kitchen',
+    nameAr: 'زعتر كيتشن',
+    type: 'Egyptian restaurant with its own delivery',
+    branch: 'Abbas El Akkad St., Nasr City',
+    hours: 'Every day, 12:00 PM to 2:00 AM',
+    payment: 'Cash on delivery (payment links come in Phase 2)',
+    deliveryTime: 45,
+    minOrder: 100,
+    menu: [
+      { id: 'koshary', ar: 'كشري', en: 'Koshary', cat: 'Main', sizes: { 'صغير': 45, 'وسط': 65, 'كبير': 85 } },
+      { id: 'koshary_special', ar: 'كشري سبيشيال باللحمة', en: 'Special koshary with meat', cat: 'Main', sizes: { 'عادي': 120 } },
+      { id: 'hawawshi', ar: 'حواوشي', en: 'Hawawshi', cat: 'Main', sizes: { 'عادي': 90 } },
+      { id: 'mahshi', ar: 'محشي مشكل', en: 'Mixed mahshi', cat: 'Main', sizes: { 'عادي': 110 } },
+      { id: 'molokhia', ar: 'ملوخية بالفراخ', en: 'Molokhia with chicken', cat: 'Main', sizes: { 'عادي': 160 } },
+      { id: 'foul', ar: 'ساندوتش فول', en: 'Foul sandwich', cat: 'Sandwiches', sizes: { 'عادي': 15 } },
+      { id: 'taameya', ar: 'ساندوتش طعمية', en: 'Taameya sandwich', cat: 'Sandwiches', sizes: { 'عادي': 15 } },
+      { id: 'liver', ar: 'ساندوتش كبدة', en: 'Liver sandwich', cat: 'Sandwiches', sizes: { 'عادي': 45 } },
+      { id: 'roz', ar: 'رز بلبن', en: 'Rice pudding', cat: 'Desserts', sizes: { 'عادي': 35 } },
+      { id: 'omali', ar: 'أم علي', en: 'Om Ali', cat: 'Desserts', sizes: { 'عادي': 60 } },
+      { id: 'pepsi', ar: 'بيبسي', en: 'Pepsi', cat: 'Drinks', sizes: { 'عادي': 20 } },
+      { id: 'water', ar: 'مياه', en: 'Water', cat: 'Drinks', sizes: { 'عادي': 10 } },
+    ],
+    areas: [
+      { ar: 'مدينة نصر', en: 'Nasr City', fee: 25, minutes: 45 },
+      { ar: 'مصر الجديدة', en: 'Heliopolis', fee: 30, minutes: 50 },
+      { ar: 'التجمع الخامس', en: 'Fifth Settlement', fee: 45, minutes: 60 },
+    ],
+    faq: [
+      { q: 'Do you have vegetarian food?', a: 'Yes: koshary, foul, taameya and mahshi are vegetarian.' },
+      { q: 'Can I pick up my order?', a: 'Yes, pick-up from the Nasr City branch, no delivery fee.' },
+      { q: 'Do you cater for events?', a: 'Orders above 30 people need 24 hours notice; staff will call back.' },
+    ],
+    staffName: 'Ahmed',
+  },
+  clinic: {
+    name: 'Dr. Ahmed Clinic',
+    nameAr: 'عيادة د. أحمد',
+    type: 'Medical clinic (internal medicine and paediatrics)',
+    branch: 'Makram Ebeid St., Nasr City, 3rd floor',
+    doctors: [
+      { id: 'ahmed', ar: 'د. أحمد سمير', en: 'Dr. Ahmed Samir', spec: 'باطنة', specEn: 'Internal medicine', fee: 400, followup: 200, days: [0, 1, 2, 3, 4], from: 17, to: 22 },
+      { id: 'mona', ar: 'د. منى عادل', en: 'Dr. Mona Adel', spec: 'أطفال', specEn: 'Paediatrics', fee: 350, followup: 150, days: [6, 0, 2], from: 12, to: 16 },
+    ],
+    slotMinutes: 30,
+    insurance: 'AXA, Allianz and MetLife (bring the card)',
+    payment: 'Cash or card at the clinic',
+    faq: [
+      { q: 'Is the follow-up visit free?', a: 'Follow-up within 14 days costs the follow-up fee, not the full fee.' },
+      { q: 'Do you do home visits?', a: 'No home visits. Staff can recommend a home-care service.' },
+      { q: 'Is there parking?', a: 'Street parking only; a public garage is 2 minutes away.' },
+    ],
+    staffName: 'Nadia',
+  },
+};
+
+const CUSTOMERS = {
+  restaurant: [
+    { id: 'c1', name: 'Mona', phone: '01012345678' },
+    { id: 'c2', name: 'Karim', phone: '01198765432' },
+  ],
+  clinic: [
+    { id: 'c3', name: 'Sara', phone: '01234567890' },
+    { id: 'c4', name: 'Youssef', phone: '01555123456' },
+  ],
+};
+
+const DEMO_PROMPTS = {
+  restaurant: [
+    { label: 'Order', text: 'مساء الخير، عايزة اتنين كشري كبير وواحد رز بلبن' },
+    { label: 'Note', text: 'ممكن تكتبلي ملاحظة إن الكشري ميكونش حراق؟' },
+    { label: 'Address', text: '١٢ شارع عباس العقاد، مدينة نصر' },
+    { label: 'Name', text: 'باسم منى' },
+    { label: 'Price question', text: 'هو الكشري الكبير بكام؟' },
+    { label: 'Not in approved info', text: 'عندكم أكل خالي من الجلوتين؟' },
+    { label: 'Delivery area', text: 'بتوصلوا التجمع؟ والتوصيل بكام؟' },
+  ],
+  clinic: [
+    { label: 'Book', text: 'عايزة أحجز كشف عند دكتور أحمد بكرة' },
+    { label: 'Pick a time', text: 'الساعة سبعة' },
+    { label: 'Name', text: 'باسم سارة محمود' },
+    { label: 'Fees', text: 'الكشف بكام؟ والاستشارة؟' },
+    { label: 'Medical question', text: 'عندي صداع جامد من يومين، آخد إيه؟' },
+    { label: 'Not in approved info', text: 'ممكن أغير معاد الحجز بتاعي؟' },
+  ],
+};
+
+// Monthly report numbers (hypothetical, same as slide 2 for the restaurant)
+const MONTHLY = {
+  restaurant: {
+    month: 'September', fee: 2500, plan: 'Plus',
+    kpis: [
+      { v: '450', l: 'missed calls & chats picked up' },
+      { v: '60', l: 'orders taken by the assistant' },
+      { v: 'EGP 18,000', l: 'in recovered orders' },
+      { v: 'EGP 3,600', l: 'delivery-app commission avoided (est.)' },
+    ],
+    bars: [['12-1', 12], ['1-3', 34], ['3-6', 14], ['6-8', 26], ['8-10', 38], ['after 10', 22]],
+    value: 7200, valueLabel: 'profit from recovered orders',
+    topQuestions: ['Delivery fee to Fifth Settlement', 'Is the large koshary enough for two?', 'Opening hours on Friday'],
+  },
+  clinic: {
+    month: 'September', fee: 1500, plan: 'Essential',
+    kpis: [
+      { v: '212', l: 'missed calls & chats picked up' },
+      { v: '38', l: 'bookings made by the assistant' },
+      { v: 'EGP 14,900', l: 'in booked visits' },
+      { v: '64', l: 'after-hours calls answered' },
+    ],
+    bars: [['9-12', 18], ['12-3', 26], ['3-5', 22], ['5-8', 40], ['8-10', 30], ['after 10', 24]],
+    value: 14900, valueLabel: 'in booked visits',
+    topQuestions: ['Consultation fee', 'Is Dr. Mona in on Saturday?', 'Which insurance do you accept?'],
+  },
+};
+
+// Seed numbers for "today" so the dashboard is not empty
+const SEED_TODAY = {
+  restaurant: { convs: 37, picked: 31, done: 9 },
+  clinic: { convs: 24, picked: 19, done: 6 },
+};
+const SEED_CONVS = {
+  restaurant: [
+    { name: 'Hany', phone: '01022233344', channel: 'call', minsAgo: 22, last: 'Order: 3 hawawshi, 2 Pepsi', status: 'order' },
+    { name: 'Laila', phone: '01144455566', channel: 'whatsapp', minsAgo: 48, last: 'Are you open until 2 am?', status: 'answered' },
+    { name: 'Omar', phone: '01277788899', channel: 'call', minsAgo: 75, last: 'Order: family koshary meal', status: 'order' },
+    { name: 'Dina', phone: '01566677788', channel: 'whatsapp', minsAgo: 110, last: 'Delivery fee to Heliopolis?', status: 'answered' },
+  ],
+  clinic: [
+    { name: 'Hoda', phone: '01033344455', channel: 'call', minsAgo: 18, last: 'Booked: Dr. Ahmed, tomorrow 6:30 PM', status: 'booked' },
+    { name: 'Tarek', phone: '01188899900', channel: 'whatsapp', minsAgo: 40, last: 'Do you accept AXA?', status: 'answered' },
+    { name: 'Nour', phone: '01222211100', channel: 'call', minsAgo: 95, last: 'Asked about lab results', status: 'staff' },
+  ],
+};
+
+const SEED_ORDERS = [
+  { id: 1045, customer: 'Hany', phone: '01022233344', channel: 'call', minsAgo: 22, lines: [{ item: 'حواوشي', en: 'Hawawshi', size: 'عادي', qty: 3, unit: 90, total: 270 }, { item: 'بيبسي', en: 'Pepsi', size: 'عادي', qty: 2, unit: 20, total: 40 }], subtotal: 310, fee: 25, total: 335, area: 'Nasr City', address: '7 Makram Ebeid St.', status: 'out' },
+  { id: 1046, customer: 'Omar', phone: '01277788899', channel: 'call', minsAgo: 75, lines: [{ item: 'كشري', en: 'Koshary', size: 'كبير', qty: 4, unit: 85, total: 340 }, { item: 'أم علي', en: 'Om Ali', size: 'عادي', qty: 2, unit: 60, total: 120 }], subtotal: 460, fee: 30, total: 490, area: 'Heliopolis', address: '15 Baghdad St.', status: 'delivered' },
+];
+
+// ===================================================================
+// AGENT: instructions + approved info + tools + Gemini / offline brain
+// ===================================================================
+const AR_DIG = '٠١٢٣٤٥٦٧٨٩';
+const toLatin = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => AR_DIG.indexOf(d));
+const toAr = (s) => String(s).replace(/[0-9]/g, (d) => AR_DIG[d]);
+const normAr = (s) => toLatin(s).toLowerCase()
+  .replace(/[ً-ْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي')
+  .replace(/[؟?!.,،:]/g, ' ').replace(/\s+/g, ' ').trim();
+const DAYS_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAYS_AR = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const pad = (n) => String(n).padStart(2, '0');
+const isoOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+function dayInfo(offset) {
+  const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + offset);
+  return { iso: isoOf(d), dow: d.getDay(), en: `${DAYS_EN[d.getDay()]} ${d.getDate()} ${MONTHS_EN[d.getMonth()]}`, ar: DAYS_AR[d.getDay()], date: d };
+}
+function parseIso(iso) { const [y, m, d] = iso.split('-').map(Number); const x = new Date(y, m - 1, d, 12); return x; }
+function time12(hhmm) { let [h, m] = hhmm.split(':').map(Number); const pm = h >= 12; const h12 = ((h + 11) % 12) + 1; return `${h12}:${pad(m)} ${pm ? 'PM' : 'AM'}`; }
+function nowHHMM() { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function hash(str) { let h = 2166136261; for (const c of str) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return Math.abs(h); }
+
+// ------------------------------------------------------------- menu & areas
+const SIZE_SYN = { 'كبير': 'كبير', 'large': 'كبير', 'big': 'كبير', 'وسط': 'وسط', 'متوسط': 'وسط', 'medium': 'وسط', 'صغير': 'صغير', 'small': 'صغير', 'عادي': 'عادي', 'regular': 'عادي' };
+function findMenuItem(name) {
+  const q = normAr(name); if (!q) return null;
+  const menu = S.info.restaurant.menu;
+  let best = null, bestScore = 0;
+  for (const it of menu) {
+    const a = normAr(it.ar), e = it.en.toLowerCase();
+    let sc = 0;
+    if (q === a || q === e) sc = 100;
+    else if (q.includes(a)) sc = 50 + a.length;
+    else if (a.includes(q)) sc = 40 - (a.length - q.length) / 10;
+    else if (q.includes(e) || e.includes(q)) sc = 30;
+    else {
+      const qw = q.split(' ').filter((w) => w.length > 2); const aw = a.split(' ');
+      const hits = qw.filter((w) => aw.includes(w) || aw.some((x) => x.includes(w) || w.includes(x))).length;
+      if (hits) sc = 10 + hits;
+    }
+    if (sc > bestScore) { bestScore = sc; best = it; }
+  }
+  return best;
+}
+function findArea(area) {
+  const q = normAr(area); if (!q) return null;
+  return S.info.restaurant.areas.find((a) => q.includes(normAr(a.ar)) || normAr(a.ar).includes(q) || q.includes(a.en.toLowerCase()) || (normAr(a.ar).includes('التجمع') && q.includes('تجمع'))) || null;
+}
+function priceOrder(items, area, pickup) {
+  const R = S.info.restaurant; const lines = []; const problems = [];
+  for (const raw of items || []) {
+    const it = findMenuItem(raw.item || raw.name || '');
+    const qty = Math.max(1, parseInt(toLatin(raw.quantity ?? raw.qty ?? 1), 10) || 1);
+    if (!it) { problems.push(`"${raw.item}" is not on the menu`); continue; }
+    const sizes = Object.keys(it.sizes);
+    let size = sizes.length === 1 ? sizes[0] : null;
+    if (!size && raw.size) { const s = SIZE_SYN[normAr(raw.size)] || SIZE_SYN[String(raw.size).toLowerCase()] || normAr(raw.size); size = sizes.find((x) => normAr(x) === normAr(s)) || null; }
+    if (!size) { problems.push(`size needed for ${it.ar}: ${sizes.map((s) => `${s} ${it.sizes[s]} EGP`).join(', ')}`); continue; }
+    const unit = Number(it.sizes[size]);
+    lines.push({ item: it.ar, en: it.en, size, qty, unit, total: unit * qty });
+  }
+  const subtotal = lines.reduce((a, l) => a + l.total, 0);
+  let fee = 0, areaObj = null, eta = R.deliveryTime;
+  if (!pickup && area) {
+    areaObj = findArea(area);
+    if (!areaObj) problems.push(`no delivery to "${area}". Delivery areas: ${R.areas.map((a) => a.ar).join('، ')}`);
+    else { fee = Number(areaObj.fee); eta = areaObj.minutes; }
+  }
+  if (subtotal && subtotal < R.minOrder && !pickup) problems.push(`minimum order for delivery is ${R.minOrder} EGP`);
+  return { lines, subtotal, fee, total: subtotal + fee, area: areaObj, eta, problems };
+}
+
+// ------------------------------------------------------------- clinic slots
+function findDoctor(q) {
+  const docs = S.info.clinic.doctors; const n = normAr(q || '');
+  return docs.find((d) => n.includes(d.id) || n.includes(normAr(d.ar).replace('د ', '').split(' ')[0]) || normAr(d.ar).includes(n) && n.length > 2 || n.includes(normAr(d.spec)) || d.en.toLowerCase().includes(n) && n.length > 2 || n.includes(d.specEn.toLowerCase())) || null;
+}
+function clinicSlots(doc, iso) {
+  const C = S.info.clinic; const d = parseIso(iso); const out = [];
+  if (!doc.days.includes(d.getDay())) return null;
+  const todayIso = dayInfo(0).iso; const now = nowHHMM();
+  for (let m = doc.from * 60; m < doc.to * 60; m += C.slotMinutes) {
+    const t = `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+    const live = S.bookings.find((b) => b.doctorId === doc.id && b.date === iso && b.time === t);
+    const seeded = !live && !['19:00', '13:00'].includes(t) && (hash(doc.id + iso + t) % 10) < 5;
+    const past = iso === todayIso && t <= now;
+    out.push({ time: t, status: live ? 'live' : seeded ? 'booked' : past ? 'past' : 'free', booking: live });
+  }
+  return out;
+}
+function parseDateArg(x) {
+  const s = normAr(x || '');
+  if (/^\d{4}-\d{2}-\d{2}$/.test(toLatin(x || '').trim())) return toLatin(x).trim();
+  if (s.includes('بعد بكره')) return dayInfo(2).iso;
+  if (s.includes('بكره') || s.includes('tomorrow')) return dayInfo(1).iso;
+  if (s.includes('النهارده') || s.includes('today')) return dayInfo(0).iso;
+  for (let i = 0; i < 8; i++) { const di = dayInfo(i); if (s.includes(normAr(di.ar).replace('ال', '')) || s.includes(DAYS_EN[di.dow].toLowerCase())) return di.iso; }
+  return null;
+}
+
+// ------------------------------------------------------------- tool declarations
+function toolDecls(biz) {
+  const handover = { name: 'hand_over_to_staff', description: 'Pass the conversation to a human staff member. Use when the answer is not in the approved information, for complaints, cancellations, changes to items or prices of a confirmed order, allergies or health questions, requests for a manager or a person, or anything sensitive. NOT for simple preparation or delivery notes: use the notes field of place_order or add_order_note for those.', parameters: { type: 'OBJECT', properties: { reason: { type: 'STRING', description: 'Short reason in English' }, summary: { type: 'STRING', description: 'One-line summary of what the customer needs, in English' } }, required: ['reason', 'summary'] } };
+  const itemsSchema = { type: 'ARRAY', items: { type: 'OBJECT', properties: { item: { type: 'STRING', description: 'Menu item name in Arabic exactly as on the menu' }, size: { type: 'STRING', description: 'Size name from the menu (e.g. كبير). Omit if the item has one size' }, quantity: { type: 'INTEGER' } }, required: ['item', 'quantity'] } };
+  if (biz === 'restaurant') return [
+    { name: 'quote_order', description: "Calculate the exact price of an order from the owner's menu and the delivery fee. ALWAYS call this before telling the customer any price or total. Never calculate yourself.", parameters: { type: 'OBJECT', properties: { items: itemsSchema, area: { type: 'STRING', description: 'Delivery area if known' }, pickup: { type: 'BOOLEAN', description: 'True if the customer will pick up' } }, required: ['items'] } },
+    { name: 'place_order', description: 'Save a confirmed order and send it to the restaurant staff. Only call after the customer confirmed the items, the delivery address and their name.', parameters: { type: 'OBJECT', properties: { customer_name: { type: 'STRING' }, items: itemsSchema, area: { type: 'STRING' }, address: { type: 'STRING' }, pickup: { type: 'BOOLEAN' }, notes: { type: 'STRING', description: "The customer's simple preparation or delivery notes, in Arabic as they said them (e.g. الحواوشي ميكونش محروق، من غير بصل، رن الجرس). Empty if none." } }, required: ['customer_name', 'items'] } },
+    { name: 'add_order_note', description: "Add a simple preparation or delivery note to this customer's order that was ALREADY placed (e.g. not burnt, no onions, sauce on the side, call on arrival). The note goes to the kitchen on the owner's dashboard. It never changes items or price.", parameters: { type: 'OBJECT', properties: { note: { type: 'STRING', description: 'The note in Arabic, short' } }, required: ['note'] } },
+    handover,
+  ];
+  return [
+    { name: 'check_free_slots', description: "Get the doctor's free appointment times on a date from the clinic schedule. Always call this before offering times.", parameters: { type: 'OBJECT', properties: { doctor: { type: 'STRING', description: 'Doctor id: ahmed or mona' }, date: { type: 'STRING', description: 'YYYY-MM-DD' } }, required: ['doctor', 'date'] } },
+    { name: 'book_appointment', description: 'Book a free slot. Only call after the patient chose a time and gave their name.', parameters: { type: 'OBJECT', properties: { doctor: { type: 'STRING', description: 'ahmed or mona' }, date: { type: 'STRING', description: 'YYYY-MM-DD' }, time: { type: 'STRING', description: 'HH:MM, 24-hour, exactly as returned by check_free_slots' }, patient_name: { type: 'STRING' }, visit_type: { type: 'STRING', description: 'new or follow-up' } }, required: ['doctor', 'date', 'time', 'patient_name'] } },
+    handover,
+  ];
+}
+
+// ------------------------------------------------------------- tool execution
+function execTool(conv, name, args) {
+  const biz = conv.biz; const R = S.info.restaurant; const C = S.info.clinic;
+  try {
+    if (name === 'quote_order') {
+      const q = priceOrder(args.items, args.area, args.pickup);
+      log('tool', `Tool <code>quote_order</code> → EGP ${q.subtotal}${q.fee ? ` + ${q.fee} delivery` : ''}`, q.problems.length ? '⚠ ' + q.problems.join('; ') : "price from the owner's menu, not from the AI");
+      return { ok: q.problems.length === 0, lines: q.lines.map((l) => `${l.qty} × ${l.item} ${l.size !== 'عادي' ? l.size : ''} = ${l.total} EGP`), subtotal: q.subtotal, delivery_fee: q.fee, total: q.total, delivery_area: q.area?.ar || null, delivery_minutes: q.eta, problems: q.problems };
+    }
+    if (name === 'place_order') {
+      const q = priceOrder(args.items, args.area, args.pickup);
+      if (q.problems.length || !q.lines.length) { log('tool', 'Tool <code>place_order</code> → not saved', '⚠ ' + q.problems.join('; ')); return { ok: false, problems: q.problems }; }
+      if (!args.pickup && !args.address && !args.area) return { ok: false, problems: ['delivery address needed'] };
+      const o = { id: S.nextOrder++, biz, convId: conv.id, customer: args.customer_name || conv.customer.name, phone: conv.customer.phone, channel: conv.channel, lines: q.lines, subtotal: q.subtotal, fee: q.fee, total: q.total, area: q.area?.en || (args.pickup ? 'Pick-up' : ''), address: args.pickup ? 'Pick-up at branch' : (args.address || ''), notes: args.notes || '', status: 'new', time: new Date(), eta: q.eta };
+      S.orders.unshift(o); conv.status = 'order'; conv.result = `Order #${o.id}: ${o.lines.map((l) => `${l.qty} ${l.en}`).join(', ')}`;
+      log('tool', `Tool <code>place_order</code> → order #${o.id} saved`, "sent to the owner's dashboard"); flashOwner('order', o.id);
+      if (conv.channel === 'call') queueConfirmation(conv, `✅ ${R.nameAr}: تم تأكيد طلبك رقم ${toAr(o.id)}\nالإجمالي ${toAr(o.total)} جنيه · التوصيل خلال ${toAr(o.eta)} دقيقة · الدفع كاش عند الاستلام`);
+      return { ok: true, order_number: o.id, total: o.total, delivery_minutes: o.eta, payment: R.payment };
+    }
+    if (name === 'add_order_note') {
+      const o = S.orders.find((x) => x.convId === conv.id);
+      if (!o) return { ok: false, instruction: 'No order placed yet in this conversation. Keep the note and pass it in the notes field of place_order.' };
+      const note = String(args.note || '').trim(); if (!note) return { ok: false, problem: 'empty note' };
+      o.notes = o.notes ? o.notes + ' · ' + note : note;
+      log('tool', `Tool <code>add_order_note</code> → note added to order #${o.id}`, note); flashOwner('order', o.id);
+      return { ok: true, order_number: o.id, note: o.notes, instruction: 'Confirm to the customer that the note was added to their order for the kitchen.' };
+    }
+    if (name === 'check_free_slots') {
+      const doc = findDoctor(args.doctor) || C.doctors[0]; const iso = parseDateArg(args.date) || dayInfo(1).iso;
+      const slots = clinicSlots(doc, iso); const di = parseIso(iso);
+      if (!slots) { const days = doc.days.map((d) => DAYS_AR[d]).join('، '); log('tool', `Tool <code>check_free_slots</code> → ${doc.en} not working that day`, `works: ${doc.days.map((d) => DAYS_EN[d]).join(', ')}`); return { ok: false, doctor: doc.ar, date: iso, reason: `${doc.ar} does not work on ${DAYS_AR[di.getDay()]}. Working days: ${days}` }; }
+      const free = slots.filter((s) => s.status === 'free').map((s) => s.time);
+      log('tool', `Tool <code>check_free_slots</code> → ${free.length} free on ${DAYS_EN[di.getDay()]}`, `${doc.en}: ${free.slice(0, 4).map(time12).join(', ')}${free.length > 4 ? '…' : ''}`);
+      return { ok: true, doctor: doc.ar, doctor_id: doc.id, date: iso, day: DAYS_AR[di.getDay()], free_times_24h: free, fee_new: doc.fee, fee_follow_up: doc.followup };
+    }
+    if (name === 'book_appointment') {
+      const doc = findDoctor(args.doctor) || C.doctors[0]; const iso = parseDateArg(args.date); const t = toLatin(args.time || '').trim().padStart(5, '0');
+      const slots = iso && clinicSlots(doc, iso); const slot = slots && slots.find((s) => s.time === t);
+      if (!slot || slot.status !== 'free') { log('tool', 'Tool <code>book_appointment</code> → slot not free', `${doc.en} ${iso} ${t}: taken or not available`); return { ok: false, problem: 'This time is not free. Call check_free_slots again and offer other times.' }; }
+      const ft = (args.visit_type || '').includes('follow') ? 'follow-up' : 'new';
+      const b = { id: S.nextBooking++, biz, convId: conv.id, doctorId: doc.id, doctor: doc.en, doctorAr: doc.ar, date: iso, time: t, patient: args.patient_name || conv.customer.name, phone: conv.customer.phone, channel: conv.channel, type: ft, fee: ft === 'new' ? doc.fee : doc.followup, status: 'new', created: new Date() };
+      S.bookings.unshift(b); conv.status = 'booked'; conv.result = `Booked: ${doc.en}, ${DAYS_EN[parseIso(iso).getDay()]} ${time12(t)}`;
+      log('tool', `Tool <code>book_appointment</code> → booking saved`, `${doc.en}, ${DAYS_EN[parseIso(iso).getDay()]} ${time12(t)}: slot now taken`); flashOwner('booking', b.id);
+      const msg = `✅ ${C.nameAr}: تم تأكيد حجزك\n${doc.ar} · ${DAYS_AR[parseIso(iso).getDay()]} ${toAr(parseIso(iso).getDate())}/${toAr(parseIso(iso).getMonth() + 1)} الساعة ${toAr(time12(t).replace(' PM', ' م').replace(' AM', ' ص'))}\nالكشف ${toAr(b.fee)} جنيه · ${C.branch}`;
+      if (conv.channel === 'call') queueConfirmation(conv, msg);
+      return { ok: true, booking_number: b.id, doctor: doc.ar, day: DAYS_AR[parseIso(iso).getDay()], date: iso, time: t, fee: b.fee, address: C.branch };
+    }
+    if (name === 'hand_over_to_staff') {
+      conv.status = 'staff_needed'; conv.handover = { reason: args.reason || '', summary: args.summary || '', time: new Date() }; conv.result = args.summary || args.reason;
+      log('handover', 'Handed over to staff', args.summary || args.reason || ''); flashOwner('handover', conv.id);
+      return { ok: true, instruction: conv.channel === 'call' ? 'Tell the caller a team member will call them back within 15 minutes on this number.' : 'Tell the customer a team member will reply here shortly.' };
+    }
+    return { ok: false, problem: 'unknown tool' };
+  } catch (e) { console.error(e); return { ok: false, problem: String(e.message || e) }; }
+}
+
+// ------------------------------------------------------------- instructions
+function serializeInfo(biz) {
+  if (biz === 'restaurant') {
+    const R = S.info.restaurant;
+    return [
+      `Business: ${R.nameAr} (${R.name}), ${R.type}. Branch: ${R.branch}.`,
+      `Opening hours: ${R.hours}.`, `Payment: ${R.payment}.`, `Minimum order for delivery: ${R.minOrder} EGP.`,
+      `Delivery areas: ${R.areas.map((a) => `${a.ar} (${a.en}) fee ${a.fee} EGP, about ${a.minutes} min`).join('; ')}. No delivery outside these areas.`,
+      'Menu (EGP):', ...R.menu.map((m) => `- ${m.ar} (${m.en}): ${Object.entries(m.sizes).map(([s, p]) => (s === 'عادي' ? `${p}` : `${s} ${p}`)).join(', ')}`),
+      'FAQ:', ...R.faq.map((f) => `- Q: ${f.q} A: ${f.a}`),
+    ].join('\n');
+  }
+  const C = S.info.clinic;
+  return [
+    `Business: ${C.nameAr} (${C.name}), ${C.type}. Address: ${C.branch}.`,
+    'Doctors:', ...C.doctors.map((d) => `- ${d.ar} (${d.en}, id "${d.id}"): ${d.spec} (${d.specEn}). Works ${d.days.map((x) => `${DAYS_AR[x]}`).join('، ')} from ${d.from}:00 to ${d.to}:00. New visit ${d.fee} EGP, follow-up ${d.followup} EGP.`),
+    `Appointments are ${C.slotMinutes} minutes. Insurance: ${C.insurance}. Payment: ${C.payment}.`,
+    'FAQ:', ...C.faq.map((f) => `- Q: ${f.q} A: ${f.a}`),
+  ].join('\n');
+}
+function greetingFor(biz) { const h = new Date().getHours(); return `${S.info[biz].nameAr}، ${h < 12 ? 'صباح الخير' : 'مساء الخير'}، أقدر أساعد حضرتك إزاي؟`; }
+function buildSystemPrompt(conv) {
+  const biz = conv.biz; const I = S.info[biz]; const call = conv.channel === 'call';
+  const cal = [0, 1, 2, 3, 4, 5, 6].map((i) => { const d = dayInfo(i); return `${i === 0 ? 'today' : i === 1 ? 'tomorrow (بكرة)' : i === 2 ? 'after tomorrow (بعد بكرة)' : ''} ${d.ar} ${d.en} = ${d.iso}`.trim(); }).join('; ');
+  const common = `You are the virtual assistant that answers ${call ? 'phone calls' : 'WhatsApp messages'} for ${I.nameAr} (${I.name}) when the staff cannot. You work for the owner.
+Customer phone (from caller ID): ${conv.customer.phone}. Do not ask for the phone number.
+Now: ${dayInfo(0).en} ${dayInfo(0).date.getFullYear()}, ${nowHHMM()}. Calendar: ${cal}.
+
+HOW TO TALK
+- Speak Egyptian colloquial Arabic (عامية مصرية), warm and polite (حضرتك، يا فندم). If the customer uses English, answer in English.
+- Keep each reply short: one or two sentences, like a good receptionist. Ask one question at a time.
+${call ? '- This is a live phone call: no emojis, no lists, no symbols. Say numbers and prices in Egyptian words (مية وسبعين جنيه، الساعة سبعة ونص). You already greeted the caller with: "' + greetingFor(biz) + '"' : '- This is WhatsApp: plain text, at most one emoji.'}
+- EGYPTIAN DIALECT IS ESSENTIAL. Sound like a friendly Cairo receptionist, never like Modern Standard Arabic or a news reader.
+  Use words like: إيه، عايز/عايزة، تحب، دلوقتي، كده، تمام، حاضر، ماشي، أيوه، لأ، فين، إمتى، بكام، هو/هي، حضرتك، يا فندم، ثانية واحدة، معلش، ولا (for "or"). Use هـ for the future (هبعتلك، هيوصلك، هحجزلك).
+  Never use: هل، سوف، ماذا، لماذا، لديكم، لدينا، حسناً، أود، الآن، كيف يمكنني، نعم، شكراً لتواصلك، عزيزي العميل.
+  Good examples: "أهلاً يا فندم، تحب تطلب إيه؟" · "تمام، الحساب ميتين وخمسة جنيه، أوصله فين؟" · "معلش الصنف ده مش عندنا، بس عندنا كشري وحواوشي" · "ثانية واحدة أشوفلك المواعيد" · "تحب الساعة ستة ولا سبعة ونص؟"
+- Never mention AI, models, tools, systems or "approved information". If asked whether you are a person, say you are ${I.nameAr}'s virtual assistant and a team member can call back.
+
+WHAT YOU MAY SAY
+- Use ONLY the APPROVED INFORMATION below. Never invent prices, items, times, policies, or anything else.
+- If something is not in the approved information, or the customer complains, wants to cancel or change a confirmed order, asks for a manager or a person, or asks anything sensitive: call hand_over_to_staff, then tell the customer a team member will follow up.
+- Never confirm an order or booking unless the tool returned ok: true.`;
+  const flow = biz === 'restaurant'
+    ? `
+ORDERS
+- Never calculate prices yourself: call quote_order and use its numbers. If the item has several sizes and the customer did not say, ask which size.
+- Flow: items → quote_order → tell the total and delivery fee → ask the address and area (or pick-up) → ask the name → place_order → confirm with the order number, total, delivery time and payment on delivery.
+- If the customer already gave several details at once, do not ask again.
+- NOTES ARE NORMAL, NEVER A HANDOVER: simple preparation or delivery requests (مثلاً: الحواوشي ميكونش محروق، مستوي كويس، من غير بصل، الصوص على جنب، رن الجرس، كلمني لما توصل) are just notes for the kitchen. Accept them, repeat the note back in one short sentence, and pass it in the notes field of place_order. If the order is already placed, call add_order_note. Notes never change the price.
+- Hand over only if the request needs an item not on the menu, a price change, or a promise about allergies or health (e.g. gluten-free, allergy): the kitchen must answer those.`
+    : `
+BOOKINGS
+- Never give medical advice, diagnosis or medicine names. Offer to book with the right doctor instead.
+- Emergency signs (chest pain, difficulty breathing, heavy bleeding, fainting, severe injury): tell them to call the ambulance on 123 now or go to the nearest emergency room, then call hand_over_to_staff.
+- Flow: which doctor (suggest by specialty) → which day → check_free_slots → offer at most three times → patient name → book_appointment → confirm doctor, day, time, fee and address.
+- Times: say them naturally (for example "سبعة بالليل"). Pass times to tools as HH:MM 24-hour.`;
+  return `${common}\n${flow}\n\nAPPROVED INFORMATION (set by the owner, always current)\n${serializeInfo(biz)}`;
+}
+
+// ------------------------------------------------------------- Gemini (REST)
+const GEMINI = 'https://generativelanguage.googleapis.com/v1beta';
+async function listModels(key) {
+  const r = await fetch(`${GEMINI}/models?pageSize=1000`, { headers: { 'x-goog-api-key': key } });
+  const j = await r.json(); if (!r.ok) throw new Error(j.error?.message || `HTTP ${r.status}`);
+  const all = (j.models || []).map((m) => ({ id: m.name.replace('models/', ''), methods: m.supportedGenerationMethods || [] }));
+  const ver = (id) => { const m = id.match(/gemini-(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : 0; };
+  const text = all.filter((m) => m.methods.includes('generateContent') && /flash/.test(m.id) && !/(image|tts|live|audio|embed|robot|computer|transcribe|translate|exp|thinking)/.test(m.id))
+    .sort((a, b) => (/preview/.test(a.id) - /preview/.test(b.id)) || (/lite/.test(a.id) - /lite/.test(b.id)) || (ver(b.id) - ver(a.id)) || (a.id.length - b.id.length));
+  const live = all.filter((m) => m.methods.includes('bidiGenerateContent') && !/(translate|transcribe|thinking)/.test(m.id))
+    .sort((a, b) => ((/live|native-audio/.test(b.id)) - (/live|native-audio/.test(a.id))) || (/preview/.test(a.id) - /preview/.test(b.id)) || (ver(b.id) - ver(a.id)));
+  const tts = all.filter((m) => /tts/.test(m.id)).sort((a, b) => (/preview/.test(a.id) - /preview/.test(b.id)) || (/lite/.test(a.id) - /lite/.test(b.id)) || (ver(b.id) - ver(a.id)));
+  return { text: text.map((m) => m.id), live: live.map((m) => m.id), tts: tts.map((m) => m.id) };
+}
+async function callGemini(conv, model) {
+  const st = S.settings; model = model || st.textModel;
+  const body = { systemInstruction: { parts: [{ text: buildSystemPrompt(conv) }] }, contents: conv.history, tools: [{ functionDeclarations: toolDecls(conv.biz) }], generationConfig: { temperature: 0.4, maxOutputTokens: 2048 } };
+  if (!st.noThinkingCfg) {
+    if (/gemini-2\.5/.test(model)) body.generationConfig.thinkingConfig = { thinkingBudget: 0 };
+    else if (/gemini-[3-9]/.test(model)) body.generationConfig.thinkingConfig = { thinkingLevel: 'low' };
+  }
+  const r = await fetch(`${GEMINI}/models/${model}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': st.apiKey }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const msg = j.error?.message || `HTTP ${r.status}`;
+    if (r.status === 400 && /thinking/i.test(msg) && !st.noThinkingCfg) { st.noThinkingCfg = true; return callGemini(conv, model); }
+    if (r.status === 400 && /signature/i.test(msg) && !conv._stripped) { conv._stripped = true; conv.history.forEach((c) => (c.parts || []).forEach((p) => delete p.thoughtSignature)); return callGemini(conv, model); }
+    const err = new Error(msg); err.status = r.status; throw err;
+  }
+  return j;
+}
+const BUSY = /(high demand|overload|unavailable|exhausted|quota|rate limit|try again|internal|deadline|timeout|failed to fetch)/i;
+async function callGeminiResilient(conv) {
+  const st = S.settings; const list = [st.textModel, ...(st.textModels || []).filter((m) => m !== st.textModel)].slice(0, 4);
+  let lastErr;
+  for (let i = 0; i < list.length; i++) {
+    try {
+      const j = await callGemini(conv, list[i]);
+      if (list[i] !== st.textModel) { log('warn', `Switched to ${list[i]}`, `${st.textModel} was busy`); st.textModel = list[i]; saveSettings(); renderBrain(); renderTop(); }
+      return j;
+    } catch (e) {
+      lastErr = e;
+      if (!(e.status >= 429 || BUSY.test(e.message))) throw e;
+      log('warn', `${list[i]} is busy: trying another Gemini model`, String(e.message).slice(0, 90));
+      if (i === 0) await new Promise((r) => setTimeout(r, 600));
+    }
+  }
+  throw lastErr;
+}
+async function geminiTurn(conv, userText) {
+  const before = conv.history.length;
+  conv.history.push({ role: 'user', parts: [{ text: userText }] });
+  try {
+    for (let step = 0; step < 6; step++) {
+      const j = await callGeminiResilient(conv);
+      const cand = j.candidates?.[0]; const content = cand?.content;
+      if (!content?.parts?.length) throw new Error('Empty answer' + (cand?.finishReason ? ` (${cand.finishReason})` : ''));
+      if (!content.role) content.role = 'model';
+      conv.history.push(content);
+      const calls = content.parts.filter((p) => p.functionCall);
+      if (calls.length) {
+        const parts = calls.map((p) => { const fc = p.functionCall; const res = execTool(conv, fc.name, fc.args || {}); const fr = { name: fc.name, response: res }; if (fc.id) fr.id = fc.id; return { functionResponse: fr }; });
+        conv.history.push({ role: 'user', parts });
+        continue;
+      }
+      const text = content.parts.filter((p) => p.text && !p.thought).map((p) => p.text).join('').trim();
+      if (text) return text;
+      throw new Error('No text in answer');
+    }
+    throw new Error('Too many tool steps');
+  } catch (e) { conv.history.length = before; throw e; }
+}
+
+// ------------------------------------------------------------- one turn (Gemini, with offline fallback)
+async function assistantTurn(conv, userText) {
+  const t0 = performance.now();
+  if (S.settings.mode === 'live' && S.settings.apiKey && S.settings.textModel) {
+    try {
+      log('gemini', 'Gemini read the message and the approved info', S.settings.textModel);
+      const reply = await geminiTurn(conv, userText);
+      log('reply', 'Reply sent', `reply time ${((performance.now() - t0) / 1000).toFixed(1)} s`);
+      return reply;
+    } catch (e) {
+      console.warn(e); log('warn', 'Gemini unavailable: answered in offline mode', String(e.message || e).slice(0, 140));
+      toast('Gemini did not answer (' + String(e.message || e).slice(0, 80) + '). Answered in offline mode.', 'warn');
+    }
+  } else log('gemini', 'Offline demo brain (no internet needed)', 'rule-based backup of the same agent');
+  const reply = offlineTurn(conv, userText);
+  conv.history.push({ role: 'user', parts: [{ text: userText }] }, { role: 'model', parts: [{ text: reply }] });
+  log('reply', 'Reply sent', `reply time ${((performance.now() - t0) / 1000).toFixed(1)} s`);
+  return reply;
+}
+
+// ------------------------------------------------------------- offline brain (rule-based backup)
+const NUM_WORDS = { 'واحد': 1, 'واحده': 1, 'اتنين': 2, 'اثنين': 2, 'تلاته': 3, 'ثلاثه': 3, 'اربعه': 4, 'اربع': 4, 'خمسه': 5, 'سته': 6, 'سبعه': 7, 'تمانيه': 8, 'تسعه': 9, 'عشره': 10, 'حداشر': 11, 'اتناشر': 12 };
+function numBefore(words, idx) {
+  for (let k = idx - 1; k >= Math.max(0, idx - 2); k--) { const w = words[k].replace(/^و/, ''); if (/^\d+$/.test(w)) return parseInt(w, 10); if (NUM_WORDS[w]) return NUM_WORDS[w]; }
+  return 1;
+}
+function offlineParseItems(text) {
+  const t = normAr(text); const words = t.split(' '); const found = [];
+  const menu = [...S.info.restaurant.menu].sort((a, b) => normAr(b.ar).length - normAr(a.ar).length);
+  let rest = t;
+  for (const it of menu) {
+    const key = normAr(it.ar).replace(/^ساندوتش /, '');
+    const idx = rest.indexOf(key); if (idx < 0) continue;
+    rest = rest.slice(0, idx) + ' '.repeat(key.length) + rest.slice(idx + key.length);
+    const before = t.slice(0, idx).trim().split(' '); const qty = numBefore(before, before.length);
+    const after = t.slice(idx + key.length, idx + key.length + 12);
+    let size = null; for (const s of Object.keys(SIZE_SYN)) if (after.includes(s)) { size = SIZE_SYN[s]; break; }
+    found.push({ item: it.ar, size, quantity: qty, pos: idx });
+  }
+  return found.sort((x, y) => x.pos - y.pos).map(({ pos, ...r }) => r);
+}
+function offlineTurn(conv, text) {
+  const t = normAr(text); const o = conv.off || (conv.off = { stage: null }); const biz = conv.biz;
+  const has = (...ws) => ws.some((w) => t.includes(normAr(w)));
+  const greet = has('السلام', 'مساء', 'صباح', 'اهلا', 'ازيك', 'هاي', 'الو', 'hello', 'hi ');
+  if (biz === 'restaurant') {
+    const R = S.info.restaurant;
+    if (has('جلوتين', 'حساسيه', 'شكوي', 'مدير', 'استرجاع', 'الغي', 'الغاء', 'اتأخر', 'متأخر', 'gluten', 'complain', 'manager')) {
+      execTool(conv, 'hand_over_to_staff', { reason: 'Not in approved info / needs staff', summary: `Customer asked: "${text}"` });
+      return 'سؤال مهم يا فندم، هخلي حد من فريق المطعم يرد على حضرتك هنا حالاً.';
+    }
+    const isNote = has('ملاحظه', 'ميكونش', 'مايكونش', 'متكونش', 'ماتكونش', 'حراق', 'محروق', 'مستوي', 'من غير', 'بدون', 'على جنب', 'علي جنب', 'رن الجرس', 'كلمني لما');
+    if (isNote) {
+      let note = text.trim(); const m = note.match(/(?:إن|ان|أن)\s+(.+)$/); if (/ملاحظ/.test(normAr(note)) && m) note = m[1].trim();
+      note = note.replace(/[؟?]+$/, '').trim();
+      if (o.cart && o.cart.length) {
+        o.notes = o.notes ? o.notes + ' · ' + note : note; log('tool', 'Note saved for the order', note);
+        return `حاضر يا فندم، كتبت ملاحظة للمطبخ: "${note}". ${o.stage === 'name' ? 'الطلب باسم مين؟' : 'أوصله على أنهي عنوان؟'}`;
+      }
+      const r = execTool(conv, 'add_order_note', { note });
+      if (r.ok) return `حاضر يا فندم، ضفت الملاحظة على طلبك رقم ${toAr(r.order_number)}: "${note}". المطبخ هيشوفها.`;
+    }
+    const items = offlineParseItems(text);
+    if (has('بكام', 'سعر', 'كام') && items.length && o.stage !== 'address') {
+      const it = findMenuItem(items[0].item); const sz = items[0].size && it.sizes[items[0].size] ? [items[0].size] : Object.keys(it.sizes);
+      log('tool', 'Looked up the price in the owner\'s menu', it.en);
+      return `${it.ar} ${sz.map((s) => (s === 'عادي' ? '' : s + ' ') + 'بـ' + toAr(it.sizes[s]) + ' جنيه').join('، ')}. تحب تطلب؟`;
+    }
+    if (has('توصيل', 'بتوصلوا', 'توصلوا') && !items.length && o.stage !== 'address') {
+      const a = findArea(text);
+      if (a) return `أيوه بنوصل ${a.ar}، التوصيل ${toAr(a.fee)} جنيه وبيوصل في حوالي ${toAr(a.minutes)} دقيقة.`;
+      return `بنوصل ${R.areas.map((a) => `${a.ar} بـ${toAr(a.fee)} جنيه`).join('، و')}.`;
+    }
+    if (has('مواعيد', 'بتفتحوا', 'بتقفلوا', 'فاتحين')) return 'إحنا فاتحين كل يوم من ١٢ الضهر لحد ٢ بالليل.';
+    if (items.length) {
+      const needSize = items.find((i) => { const it = findMenuItem(i.item); return Object.keys(it.sizes).length > 1 && !i.size; });
+      if (needSize) { o.pending = items; const it = findMenuItem(needSize.item); return `${it.ar} تحبه ${Object.keys(it.sizes).map((s) => `${s} بـ${toAr(it.sizes[s])}`).join(' ولا ')}؟`; }
+      o.cart = (o.cart || []).concat(items);
+      const q = execTool(conv, 'quote_order', { items: o.cart });
+      o.stage = 'address';
+      return `${greet ? 'أهلاً بحضرتك 😊 ' : ''}تمام: ${o.cart.map((i) => `${toAr(i.quantity)} ${i.item}${i.size && i.size !== 'عادي' ? ' ' + i.size : ''}`).join(' و')}، الحساب ${toAr(q.subtotal)} جنيه. أوصله على أنهي عنوان؟`;
+    }
+    if (o.pending && Object.values(SIZE_SYN).some((s) => t.includes(s))) {
+      const s = Object.keys(SIZE_SYN).find((k) => t.includes(k)); o.pending.forEach((i) => { if (!i.size) i.size = SIZE_SYN[s]; });
+      o.cart = (o.cart || []).concat(o.pending); o.pending = null; const q = execTool(conv, 'quote_order', { items: o.cart }); o.stage = 'address';
+      return `تمام، الحساب ${toAr(q.subtotal)} جنيه. أوصله على أنهي عنوان؟`;
+    }
+    if (o.stage === 'address') {
+      const a = findArea(text); o.address = text; o.area = a; o.stage = 'name';
+      if (!a) { o.stage = 'address'; return `للأسف بنوصل بس ${R.areas.map((x) => x.ar).join(' و')}. العنوان في أنهي منطقة؟`; }
+      const q = execTool(conv, 'quote_order', { items: o.cart, area: a.ar });
+      return `تمام، الإجمالي ${toAr(q.total)} جنيه شامل توصيل ${a.ar}. الطلب باسم مين؟`;
+    }
+    if (o.stage === 'name') {
+      const name = text.replace(/^(باسم|اسمي|الاسم|انا)\s*/, '').trim() || conv.customer.name;
+      const r = execTool(conv, 'place_order', { customer_name: name, items: o.cart, area: o.area.ar, address: o.address, notes: o.notes || '' });
+      conv.off = { stage: null };
+      if (!r.ok) return 'معلش في مشكلة في الطلب، هخلي حد من الفريق يكلم حضرتك.';
+      return `تم تأكيد طلبك يا ${name} ✅ رقم الطلب ${toAr(r.order_number)}، الإجمالي ${toAr(r.total)} جنيه، هيوصلك خلال ${toAr(r.delivery_minutes)} دقيقة والدفع كاش عند الاستلام.`;
+    }
+    if (has('المنيو', 'منيو', 'عندكم ايه', 'عندكو ايه', 'ايه الاكل', 'الاصناف', 'menu')) return `عندنا كشري (صغير ${toAr(R.menu[0].sizes['صغير'])}، وسط ${toAr(R.menu[0].sizes['وسط'])}، كبير ${toAr(R.menu[0].sizes['كبير'])})، وحواوشي ومحشي وملوخية، وساندوتشات فول وطعمية وكبدة، وحلويات رز بلبن وأم علي. تحب تطلب إيه؟`;
+    if (has('اطلب', 'اوردر', 'أوردر', 'order', 'طلب', 'عايز اكل', 'عايزه اكل')) { o.unk = 0; return `${greet ? (new Date().getHours() < 12 ? 'صباح النور' : 'مساء النور') + '، ' : ''}أكيد يا فندم ${conv.channel === 'call' ? '' : '😊 '}تحب تطلب إيه؟`; }
+    if (has('شكرا', 'متشكر', 'تسلم', 'ميرسي', 'thanks', 'thank')) return conv.channel === 'call' ? 'العفو يا فندم، بالهنا والشفا.' : 'العفو يا فندم، بالهنا والشفا 😊';
+    if (greet) return conv.channel === 'call' ? 'تحت أمرك، تحب تطلب إيه؟' : `${new Date().getHours() < 12 ? 'صباح النور' : 'مساء النور'} يا فندم 😊 تحب تطلب إيه؟`;
+    o.unk = (o.unk || 0) + 1;
+    if (o.unk === 1) return 'معلش يا فندم، ممكن توضحلي أكتر؟ تحب تطلب أكل ولا عندك سؤال عن المنيو أو التوصيل؟';
+    execTool(conv, 'hand_over_to_staff', { reason: 'Offline brain did not understand', summary: `Customer said: "${text}"` });
+    return 'ثانية واحدة يا فندم، هخلي حد من الفريق يرد على حضرتك.';
+  }
+  // clinic
+  const C = S.info.clinic;
+  if (has('نزيف', 'مش قادر اتنفس', 'ضيق تنفس', 'اغما', 'حادثه', 'الم في صدري', 'وجع في صدري')) {
+    execTool(conv, 'hand_over_to_staff', { reason: 'Possible emergency', summary: `Caller said: "${text}"` });
+    return 'لو الحالة طارئة اتصل بالإسعاف على ١٢٣ فوراً أو روح أقرب طوارئ. وهخلي حد من العيادة يكلمك حالاً.';
+  }
+  if (has('اغير', 'تغيير', 'الغي', 'الغاء', 'اأجل', 'تأجيل', 'نتيجه', 'تحاليل', 'شكوي')) {
+    execTool(conv, 'hand_over_to_staff', { reason: 'Change, cancellation or results', summary: `Patient asked: "${text}"` });
+    return 'حاضر يا فندم، هخلي حد من العيادة يتواصل مع حضرتك خلال دقايق بخصوص ده.';
+  }
+  if (has('اخد ايه', 'دوا', 'علاج', 'مسكن', 'صداع', 'سخونيه', 'كحه', 'وجع', 'الم') && !has('احجز', 'حجز', 'معاد', 'ميعاد')) {
+    return 'سلامتك يا فندم، مقدرش أوصف علاج، بس الأفضل الدكتور يشوفك. تحب أحجزلك عند د. أحمد سمير (باطنة)؟';
+  }
+  if (has('بكام', 'سعر', 'الكشف كام', 'كام الكشف', 'الاستشاره')) return C.doctors.map((d) => `${d.ar} (${d.spec}) الكشف ${toAr(d.fee)} جنيه والاستشارة ${toAr(d.followup)}`).join('، و') + '.';
+  if (has('تأمين', 'تامين')) return `بنتعامل مع ${C.insurance.includes('AXA') ? 'أكسا وأليانز وميتلايف' : C.insurance}، هات الكارنيه معاك.`;
+  if (has('احجز', 'حجز', 'معاد', 'ميعاد', 'كشف') && o.stage !== 'time' && o.stage !== 'name') {
+    const doc = has('منى', 'اطفال', 'ابني', 'بنتي') ? C.doctors[1] : C.doctors[0];
+    let iso = parseDateArg(text) || dayInfo(1).iso;
+    let r = execTool(conv, 'check_free_slots', { doctor: doc.id, date: iso });
+    if (!r.ok) { for (let i = 1; i < 8 && !r.ok; i++) { iso = dayInfo(i).iso; r = execTool(conv, 'check_free_slots', { doctor: doc.id, date: iso }); } }
+    o.doc = doc; o.date = iso; o.free = r.free_times_24h || []; o.stage = 'time';
+    const pick = o.free.slice(0, 3).map((x) => toAr(time12(x).replace(':00', '').replace(' PM', '').replace(' AM', '')));
+    return `${doc.ar} يوم ${r.day} متاح الساعة ${pick.join(' أو ')}. تحب أنهي معاد؟`;
+  }
+  if (o.stage === 'time') {
+    const w = t.split(' '); let h = null;
+    for (const x of w) { if (/^\d{1,2}$/.test(x)) h = +x; else if (NUM_WORDS[x.replace(/^ال/, '')]) h = NUM_WORDS[x.replace(/^ال/, '')]; }
+    if (h !== null) {
+      if (h < 12 && (o.doc.from >= 12 || h <= 4)) h += 12;
+      const half = t.includes('ونص'); const want = `${pad(h)}:${half ? '30' : '00'}`;
+      if (o.free.includes(want)) { o.time = want; o.stage = 'name'; return 'تمام، الحجز باسم مين؟'; }
+      return `الساعة ${toAr(time12(want).replace(':00', '').replace(' PM', ''))} محجوزة، متاح ${o.free.slice(0, 3).map((x) => toAr(time12(x).replace(':00', '').replace(' PM', ''))).join(' أو ')}.`;
+    }
+    return `متاح ${o.free.slice(0, 3).map((x) => toAr(time12(x).replace(':00', '').replace(' PM', ''))).join(' أو ')}، تحب أنهي ساعة؟`;
+  }
+  if (o.stage === 'name') {
+    const name = text.replace(/^(باسم|اسمي|الاسم|انا)\s*/, '').trim() || conv.customer.name;
+    const r = execTool(conv, 'book_appointment', { doctor: o.doc.id, date: o.date, time: o.time, patient_name: name });
+    conv.off = { stage: null };
+    if (!r.ok) return 'المعاد ده لسه اتحجز، تحب أشوفلك معاد تاني؟';
+    return `تم الحجز يا ${name} ✅ ${r.doctor} يوم ${r.day} الساعة ${toAr(time12(r.time).replace(':00', '').replace(' PM', ''))} بالليل، الكشف ${toAr(r.fee)} جنيه، والعنوان ${C.branch}.`;
+  }
+  if (has('شكرا', 'متشكر', 'تسلم', 'ميرسي', 'thanks')) return 'العفو يا فندم، ألف سلامة.';
+  if (has('مواعيد', 'امتي', 'موجود', 'بيجي')) return C.doctors.map((d) => `${d.ar} (${d.spec}) أيام ${d.days.map((x) => DAYS_AR[x]).join(' و')} من ${toAr(d.from > 12 ? d.from - 12 : d.from)} لـ${toAr(d.to > 12 ? d.to - 12 : d.to)}`).join('، و') + '. تحب أحجزلك؟';
+  if (greet) return 'أهلاً بحضرتك، تحب تحجز كشف ولا عندك استفسار؟';
+  o.unk = (o.unk || 0) + 1;
+  if (o.unk === 1) return 'معلش يا فندم، ممكن توضحلي أكتر؟ تحب تحجز كشف ولا عندك سؤال عن المواعيد أو الأسعار؟';
+  execTool(conv, 'hand_over_to_staff', { reason: 'Offline brain did not understand', summary: `Patient said: "${text}"` });
+  return 'ثانية واحدة يا فندم، هخلي حد من العيادة يرد على حضرتك.';
+}
+
+// ===================================================================
+// STATE + UI
+// ===================================================================
+const LS_KEY = 'smeAssistantPrototype.settings';
+function loadSettings() {
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch (e) { s = {}; }
+  return Object.assign({ apiKey: '', mode: 'offline', textModel: '', liveModel: '', ttsModel: '', textModels: [], liveModels: [], ttsModels: [], voice: 'Kore', callEngine: 'live', bargeIn: false, answers: 'busy', reportChannel: 'whatsapp', reportEmail: 'owner@zaatarkitchen.example' }, s);
+}
+function saveSettings() { try { const c = { ...S.settings }; delete c.noThinkingCfg; localStorage.setItem(LS_KEY, JSON.stringify(c)); } catch (e) { /* storage blocked: keep in memory */ } }
+
+const S = {
+  biz: 'restaurant',
+  info: JSON.parse(JSON.stringify(DEFAULT_INFO)),
+  convs: [], orders: [], bookings: [],
+  logs: { restaurant: [], clinic: [] },
+  nextOrder: 1047, nextBooking: 301,
+  cust: { restaurant: 'c1', clinic: 'c3' },
+  channel: 'call',
+  tab: 'today', bookDay: 1, bookDoc: 'ahmed',
+  settings: loadSettings(),
+  flash: null, busy: false, showBrain: true,
+  call: null,
+};
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmtT = (d) => d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+const fmtT12 = (d) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+const egp = (n) => 'EGP ' + Number(n).toLocaleString('en-US');
+const maskPhone = (p) => `${p.slice(0, 4)} ${p.slice(4, 7)} ${p.slice(7)}`;
+const customer = () => CUSTOMERS[S.biz].find((c) => c.id === S.cust[S.biz]);
+
+function toast(msg, kind) {
+  const d = document.createElement('div'); d.className = 'toast' + (kind ? ' ' + kind : ''); d.textContent = msg;
+  $('toasts').appendChild(d); setTimeout(() => d.remove(), kind === 'warn' ? 6000 : 3200);
+}
+const LOG_STYLE = { in: ['#25d366', 'W'], call: ['#5f6368', '☎'], hotline: ['#0b2a5b', 'H'], gemini: ['#1a73e8', 'G'], tool: ['#0b2a5b', '⚙'], handover: ['#f29900', '!'], reply: ['#25d366', '✓'], warn: ['#b06000', '!'], owner: ['#25282b', 'O'] };
+function log(kind, title, sub) {
+  S.logs[S.biz].push({ kind, title, sub: sub || '', t: new Date() });
+  if (S.logs[S.biz].length > 80) S.logs[S.biz].shift();
+  renderLog();
+}
+function flashOwner(type, id) { S.flash = { type, id, t: Date.now() }; }
+function queueConfirmation(conv, text) {
+  const wa = getConv(conv.biz, conv.customer, 'whatsapp');
+  const item = { from: 'conf', text, t: new Date(), label: 'Confirmation by SMS / WhatsApp' };
+  if (S.call && S.call.conv === conv) S.call.pending.push(() => { wa.messages.push(item); log('reply', 'Confirmation sent by SMS / WhatsApp', 'after the call'); });
+  else { wa.messages.push(item); log('reply', 'Confirmation sent by SMS / WhatsApp', ''); }
+}
+
+// ------------------------------------------------------------- conversations
+function getConv(biz, cust, channel, fresh) {
+  let c = !fresh && S.convs.find((x) => x.biz === biz && x.customer.id === cust.id && x.channel === channel && (channel === 'whatsapp' || !x.ended));
+  if (!c) { c = { id: 'v' + Math.random().toString(36).slice(2, 8), biz, customer: cust, channel, messages: [], history: [], status: 'open', started: new Date(), lastAt: new Date(), off: null }; S.convs.unshift(c); }
+  return c;
+}
+function setStatusAfterReply(conv) { if (conv.status === 'open') conv.status = 'answered'; }
+
+async function sendCustomer(text) {
+  text = (text || '').trim(); if (!text) return;
+  if (S.busy) { toast('Wait for the reply first'); return; }
+  if (S.channel !== 'whatsapp') { S.channel = 'whatsapp'; }
+  const conv = getConv(S.biz, customer(), 'whatsapp');
+  conv.messages.push({ from: 'me', text, t: new Date() }); conv.lastAt = new Date();
+  log('in', `WhatsApp message from ${conv.customer.name}`, text.length > 70 ? text.slice(0, 70) + '…' : text);
+  renderCustomer(); renderOwner();
+  if (conv.status === 'staff') { log('owner', 'Staff is handling this chat', 'the assistant stays silent'); return; }
+  S.busy = true; renderCustomer();
+  let reply;
+  try { reply = await assistantTurn(conv, text); } finally { S.busy = false; }
+  conv.messages.push({ from: 'bz', text: reply, t: new Date() }); conv.lastAt = new Date(); setStatusAfterReply(conv);
+  renderAll();
+}
+
+// ------------------------------------------------------------- top bar
+function renderTop() {
+  document.querySelectorAll('#bizSeg button').forEach((b) => b.classList.toggle('on', b.dataset.biz === S.biz));
+  const live = S.settings.mode === 'live' && S.settings.apiKey && S.settings.textModel;
+  const p = $('modePill'); p.className = 'pill ' + (live ? 'live' : 'off');
+  p.textContent = live ? '● Live: Gemini connected' : '● Offline demo mode';
+  p.title = live ? S.settings.textModel : 'Click to connect Gemini';
+  $('btnBrain').textContent = S.showBrain ? '◧ Hide panel 2' : '◧ Show panel 2';
+  $('cols').classList.toggle('nobrain', !S.showBrain);
+}
+
+// ------------------------------------------------------------- customer column
+function renderCustomer() {
+  const I = S.info[S.biz]; const cust = customer(); const col = $('custCol');
+  const initials = S.biz === 'restaurant' ? 'ZK' : 'DA';
+  let h = `<div class="ct"><b>1</b>What the customer sees</div>
+  <div class="ctrl">
+    <button class="chipb ${S.channel === 'call' ? 'on' : ''}" data-ch="call">📞 Phone call</button>
+    <button class="chipb ${S.channel === 'whatsapp' ? 'on' : ''}" data-ch="whatsapp">💬 WhatsApp</button>
+    <span style="margin-left:auto">Customer:</span>
+    ${CUSTOMERS[S.biz].map((c) => `<button class="chipb ${c.id === cust.id ? 'on' : ''}" data-cust="${c.id}">${c.name}</button>`).join('')}
+  </div>`;
+  if (S.channel === 'whatsapp') {
+    const conv = S.convs.find((x) => x.biz === S.biz && x.customer.id === cust.id && x.channel === 'whatsapp');
+    const msgs = conv ? conv.messages : [];
+    h += `<div class="phone"><div class="scr">
+      <div class="wa"><div class="av">${initials}</div><div><div class="n">${esc(I.name)}</div><div class="s">business account · online</div></div><div class="ic">📞 ⋮</div></div>
+      <div class="msgs" id="msgs">
+        <div class="m sys">Messages to ${esc(I.name)} · ${esc(cust.name)} (${maskPhone(cust.phone)})</div>
+        ${msgs.map(msgHtml).join('')}
+        ${S.busy ? '<div class="typing"><i></i><i></i><i></i></div>' : ''}
+      </div>
+      <div class="inp"><textarea id="txt" rows="1" placeholder="اكتب رسالة"></textarea>
+        <button class="round" id="btnMic" title="Dictate in Arabic">🎤</button><button class="round" id="btnSend" title="Send">➤</button></div>
+    </div></div>`;
+  } else {
+    h += callScreenHtml();
+  }
+  h += `<div class="chips"><div class="lbl">Demo shortcuts (click to ${S.channel === 'call' && S.call ? 'say' : 'send'}):</div>${DEMO_PROMPTS[S.biz].map((p, i) => `<button data-prompt="${i}" title="${esc(p.text)}">${esc(p.label)}</button>`).join('')}</div>`;
+  col.innerHTML = h;
+  const m = $('msgs'); if (m) m.scrollTop = m.scrollHeight;
+  const cap = $('cap'); if (cap) cap.scrollTop = cap.scrollHeight;
+  const txt = $('txt');
+  if (txt) {
+    txt.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); const v = txt.value; txt.value = ''; sendCustomer(v); } });
+    $('btnSend').onclick = () => { const v = txt.value; txt.value = ''; sendCustomer(v); };
+    $('btnMic').onclick = () => dictate(txt);
+    if (!S.busy) txt.focus();
+  }
+  col.querySelectorAll('[data-ch]').forEach((b) => b.onclick = () => { if (S.call) { toast('End the call first'); return; } S.channel = b.dataset.ch; renderCustomer(); });
+  col.querySelectorAll('[data-cust]').forEach((b) => b.onclick = () => { if (S.call) { toast('End the call first'); return; } S.cust[S.biz] = b.dataset.cust; renderCustomer(); });
+  col.querySelectorAll('[data-prompt]').forEach((b) => b.onclick = () => {
+    const p = DEMO_PROMPTS[S.biz][+b.dataset.prompt].text;
+    if (S.channel === 'call') { if (S.call) callSay(p); else toast('Start the call first (green button)'); }
+    else sendCustomer(p);
+  });
+  wireCall();
+}
+function msgHtml(m) {
+  const t = `<small>${fmtT12(m.t)}${m.from === 'me' ? ' ✓✓' : ''}</small>`;
+  if (m.from === 'me') return `<div class="m me">${esc(m.text)}${t}</div>`;
+  if (m.from === 'staff') return `<div class="m staff"><span class="who">${esc(m.who)} · ${esc(S.info[S.biz].name)} team</span>${esc(m.text)}${t}</div>`;
+  if (m.from === 'conf') return `<div class="m conf"><span class="who" style="color:#137333">${esc(m.label || '')}</span>${esc(m.text)}${t}</div>`;
+  return `<div class="m bz">${esc(m.text)}${t}</div>`;
+}
+let recog = null;
+function dictate(txt) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast('Dictation needs Google Chrome'); return; }
+  if (recog) { recog.stop(); return; }
+  recog = new SR(); recog.lang = 'ar-EG'; recog.interimResults = true;
+  const btn = $('btnMic'); btn.classList.add('rec');
+  recog.onresult = (e) => { let s = ''; for (const r of e.results) s += r[0].transcript; txt.value = s; };
+  recog.onerror = (e) => toast('Microphone: ' + e.error, 'warn');
+  recog.onend = () => { recog = null; const b = $('btnMic'); if (b) b.classList.remove('rec'); const v = txt.value.trim(); if (v) { txt.value = ''; sendCustomer(v); } };
+  recog.start();
+}
+
+// ------------------------------------------------------------- brain column
+function renderBrain() {
+  const biz = S.biz; const I = S.info[biz];
+  const rows = biz === 'restaurant'
+    ? [['Menu & prices', `${I.menu.length} items`], ['Delivery areas & fees', `${I.areas.length} areas`], ['Hours, payment, FAQs', `${I.faq.length + 2} items`]]
+    : [['Doctors, days & fees', `${I.doctors.length} doctors`], ['Live appointment schedule', 'next 7 days'], ['Insurance, payment, FAQs', `${I.faq.length + 2} items`]];
+  const live = S.settings.mode === 'live' && S.settings.apiKey && S.settings.textModel;
+  $('brainCol').innerHTML = `<div class="ct"><b>2</b>What the assistant does</div>
+  <div class="card"><div style="font-weight:700;font-size:13.5px">Answers only from approved info</div>
+    <div class="small">Entered by the owner in "Approved info" →</div>
+    <div class="src">${rows.map((r) => `<div><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')}</div>
+    <div class="small" style="margin-top:8px">Brain: <b style="color:${live ? '#137333' : '#b06000'}">${live ? esc(S.settings.textModel) : 'offline backup (rule-based)'}</b></div></div>
+  <div class="card logcard"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:13.5px">Live activity</div><div class="small">Shown in this demo: hidden in the real product</div></div><button class="btn sm" id="btnClr">Clear</button></div>
+    <div class="log" id="log"></div></div>`;
+  $('btnClr').onclick = () => { S.logs[S.biz] = []; renderLog(); };
+  renderLog();
+}
+function renderLog() {
+  const el = $('log'); if (!el) return;
+  const L = S.logs[S.biz];
+  el.innerHTML = L.length ? L.map((x) => { const [c, i] = LOG_STYLE[x.kind] || ['#999', '•']; return `<div class="st"><i style="background:${c}">${i}</i><div>${x.title}<div class="t">${esc(x.sub)} · ${fmtT12(x.t).replace(/ (AM|PM)/, ':' + String(x.t.getSeconds()).padStart(2, '0') + ' $1')}</div></div></div>`; }).join('')
+    : '<div class="small" style="padding:10px 0">Steps appear here as the assistant works: what it understood, which tool it used, and what it sent.</div>';
+  el.scrollTop = el.scrollHeight;
+}
+
+// ------------------------------------------------------------- owner column
+function ownerTabs() {
+  const hasNew = S.biz === 'restaurant' ? S.orders.some((o) => o.biz === 'restaurant' && o.status === 'new') : S.bookings.some((b) => b.status === 'new');
+  return [['today', 'Today'], [S.biz === 'restaurant' ? 'orders' : 'bookings', S.biz === 'restaurant' ? 'Orders' : 'Bookings', hasNew], ['info', 'Approved info'], ['reports', 'Reports'], ['settings', 'Assistant settings']];
+}
+function renderOwner() {
+  if (S.tab === 'orders' && S.biz === 'clinic') S.tab = 'bookings';
+  if (S.tab === 'bookings' && S.biz === 'restaurant') S.tab = 'orders';
+  const col = $('ownerCol'); const keep = $('pane') ? $('pane').scrollTop : 0;
+  col.innerHTML = `<div class="ct"><b>3</b>What the owner sees<span class="x">${esc(S.info[S.biz].name)} · dashboard</span></div>
+   <div class="tabs">${ownerTabs().map(([k, l, dot]) => `<button data-tab="${k}" class="${S.tab === k ? 'on' : ''}">${l}${dot ? '<span class="dot"></span>' : ''}</button>`).join('')}</div>
+   <div class="pane" id="pane">${paneHtml()}</div>`;
+  col.querySelectorAll('[data-tab]').forEach((b) => b.onclick = () => { S.tab = b.dataset.tab; renderOwner(); });
+  wirePane(); if (S.tab === 'info') $('pane').scrollTop = keep;
+}
+function liveConvs() { return S.convs.filter((c) => c.biz === S.biz && c.messages.some((m) => m.from === 'me' || m.from === 'staff')); }
+function kpis() {
+  const sd = SEED_TODAY[S.biz]; const lc = liveConvs();
+  const done = S.biz === 'restaurant' ? S.orders.filter((o) => o.biz === 'restaurant').length : S.bookings.length;
+  const staff = lc.filter((c) => c.status === 'staff_needed').length + SEED_CONVS[S.biz].filter((c) => c.status === 'staff').length;
+  return [[sd.convs + lc.length, 'calls & chats today'], [sd.picked + lc.filter((c) => c.history.length || c.messages.some((m) => m.from === 'bz')).length, 'picked up by the assistant'], [sd.done + done, S.biz === 'restaurant' ? 'orders taken' : 'bookings made'], [staff, 'needs staff']];
+}
+function statusChip(s) {
+  return { order: '<span class="chip g">Order taken</span>', booked: '<span class="chip g">Booked</span>', answered: '<span class="chip b">Answered</span>', staff_needed: '<span class="chip o">Needs staff</span>', staff: '<span class="chip r">Staff handling</span>', open: '<span class="chip b">In progress</span>' }[s] || '';
+}
+function paneHtml() {
+  const tab = S.tab;
+  if (tab === 'today') return todayHtml();
+  if (tab === 'orders') return ordersHtml();
+  if (tab === 'bookings') return bookingsHtml();
+  if (tab === 'info') return infoHtml();
+  if (tab === 'reports') return reportsHtml();
+  return assistantSettingsHtml();
+}
+function orderCard(o, big) {
+  const st = { new: ['new', 'NEW'], prep: ['prep', 'Preparing'], out: ['out', 'Out for delivery'], delivered: ['done', 'Delivered'] }[o.status];
+  const fresh = S.flash && S.flash.type === 'order' && S.flash.id === o.id && Date.now() - S.flash.t < 4000;
+  return `<div class="ord ${o.status === 'new' ? 'new' : ''}" ${fresh ? 'style="animation:glow 1s 3"' : ''}>
+    <div class="h"><div><b style="font-size:15px">Order #${o.id}</b> <span class="small">· <bdi>${esc(o.customer)}</bdi> · ${maskPhone(o.phone)} · ${o.channel === 'call' ? '📞 Call' : '💬 WhatsApp'} · ${fmtT12(o.time || new Date(Date.now() - (o.minsAgo || 0) * 60000))}</span></div><span class="tag ${st[0]}">${st[1]}</span></div>
+    ${big !== false ? `<div class="lines">${o.lines.map((l) => `<span>${l.qty} × ${esc(l.size && l.size !== 'عادي' ? ({ 'كبير': 'Large', 'وسط': 'Medium', 'صغير': 'Small' }[l.size] || l.size) + ' ' : '')}${esc(l.en.toLowerCase().startsWith('koshary') && l.size !== 'عادي' ? l.en.toLowerCase() : l.en)}</span><span>${egp(l.total)}</span>`).join('')}
+      ${o.fee ? `<span>Delivery: ${esc(o.area)}</span><span>${egp(o.fee)}</span>` : ''}<b>Total (cash on delivery)</b><b>${egp(o.total)}</b></div>
+      <div class="small">📍 <bdi>${esc(o.address)}</bdi></div>${o.notes ? `<div class="small" style="margin-top:4px;padding:6px 8px;background:#FFF4D6;border-radius:6px">📝 Note for the kitchen: <bdi>${esc(o.notes)}</bdi></div>` : ''}` : `<div class="small" style="margin-top:4px">${o.lines.map((l) => `${l.qty} × ${esc(l.en)}`).join(', ')} · <b>${egp(o.total)}</b> · ${esc(o.area)}${o.notes ? ' · 📝 <bdi>' + esc(o.notes) + '</bdi>' : ''}</div>`}
+    <div class="acc">${o.status === 'new' ? `<button class="btn red" data-acc="${o.id}">✓ Accept</button>` : o.status === 'prep' ? `<button class="btn" data-out="${o.id}">🛵 Out for delivery</button>` : o.status === 'out' ? `<button class="btn" data-del="${o.id}">Delivered</button>` : ''}
+      ${o.convId ? `<button class="btn" data-open="${o.convId}">${o.channel === 'call' ? 'Read call transcript' : 'Open chat'}</button>` : ''}</div></div>`;
+}
+function bookingCard(b) {
+  const di = parseIso(b.date);
+  return `<div class="ord ${b.status === 'new' ? 'new' : ''}"><div class="h"><div><b style="font-size:15px">Booking #${b.id}</b> <span class="small">· <bdi>${esc(b.patient)}</bdi> · ${maskPhone(b.phone)} · ${b.channel === 'call' ? '📞 Call' : '💬 WhatsApp'} · ${fmtT12(b.created)}</span></div><span class="tag ${b.status === 'new' ? 'new' : 'done'}">${b.status === 'new' ? 'NEW' : 'Seen'}</span></div>
+   <div class="lines"><span>${esc(b.doctor)}</span><span>${DAYS_EN[di.getDay()]} ${di.getDate()} ${MONTHS_EN[di.getMonth()].slice(0, 3)} · <b>${time12(b.time)}</b></span><span>Visit type</span><span>${b.type === 'new' ? 'New visit' : 'Follow-up'} · ${egp(b.fee)}</span></div>
+   <div class="acc">${b.status === 'new' ? `<button class="btn red" data-seen="${b.id}">✓ Mark as seen</button>` : ''}${b.convId ? `<button class="btn" data-open="${b.convId}">${b.channel === 'call' ? 'Read call transcript' : 'Open chat'}</button>` : ''}</div></div>`;
+}
+function todayHtml() {
+  const k = kpis(); const bump = S.flash && Date.now() - S.flash.t < 2500;
+  let h = `<div class="kp">${k.map((x, i) => `<div class="${bump && (i === 0 || i === 1 || (i === 2 && S.flash.type !== 'handover') || (i === 3 && S.flash.type === 'handover')) ? 'bump' : ''}"><b ${i === 3 ? 'style="color:#b06000"' : ''}>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>`;
+  if (S.biz === 'restaurant') S.orders.filter((o) => o.biz === 'restaurant' && o.status === 'new').forEach((o) => { h += orderCard(o); });
+  else S.bookings.filter((b) => b.status === 'new').forEach((b) => { h += bookingCard(b); });
+  liveConvs().filter((c) => c.status === 'staff_needed').forEach((c) => {
+    h += `<div class="alert">⚠ <div style="flex:1"><b>Needs staff:</b> ${esc(c.customer.name)} (${c.channel === 'call' ? 'call' : 'WhatsApp'}): ${esc(c.handover?.summary || c.handover?.reason || '')}</div><button class="btn dark sm" data-open="${c.id}">${c.channel === 'call' ? 'Call back' : 'Reply now'}</button></div>`;
+  });
+  const rows = liveConvs().map((c) => ({ t: c.lastAt, name: c.customer.name, ch: c.channel, last: c.result || (c.messages.filter((m) => m.from === 'me').slice(-1)[0]?.text || ''), status: c.status, id: c.id }))
+    .concat(SEED_CONVS[S.biz].map((s) => ({ t: new Date(Date.now() - s.minsAgo * 60000), name: s.name, ch: s.channel, last: s.last, status: s.status })));
+  h += `<div class="list"><div class="row hd"><span>Time</span><span>Customer</span><span>Conversation</span><span>Status</span></div>
+   ${rows.map((r) => `<div class="row ${r.id ? 'click' : ''}" ${r.id ? `data-open="${r.id}"` : ''}><span>${fmtT(r.t)}</span><span>${esc(r.name)} ${r.ch === 'call' ? '📞' : '💬'}</span><span class="cv ${/[؀-ۿ]/.test(r.last) ? 'ar' : ''}" style="${/[؀-ۿ]/.test(r.last) ? 'text-align:left' : ''}">${esc(r.last)}</span>${statusChip(r.status)}</div>`).join('')}</div>`;
+  h += `<div class="note">Click any live conversation to read it, reply as staff, or take over from the assistant.</div>`;
+  return h;
+}
+function ordersHtml() {
+  const live = S.orders.filter((o) => o.biz === 'restaurant');
+  const seed = SEED_ORDERS.filter((o) => !live.some((x) => x.id === o.id));
+  return `<div class="note">Every order the assistant takes lands here with the price calculated from your menu. Accepting it sends the customer an update automatically.</div>
+   ${live.map((o) => orderCard(o)).join('') || ''}${seed.map((o) => orderCard(o, false)).join('')}`;
+}
+function bookingsHtml() {
+  const C = S.info.clinic; const doc = C.doctors.find((d) => d.id === S.bookDoc) || C.doctors[0];
+  const days = [0, 1, 2, 3, 4, 5, 6].map(dayInfo); const d = days[S.bookDay] || days[1];
+  const slots = clinicSlots(doc, d.iso);
+  let h = `<div class="days">${C.doctors.map((x) => `<button class="chipb ${x.id === doc.id ? 'on' : ''}" data-doc="${x.id}">${esc(x.en)} · ${esc(x.specEn)}</button>`).join('')}</div>
+  <div class="days">${days.map((x, i) => `<button class="chipb ${i === S.bookDay ? 'on' : ''}" data-day="${i}">${i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : DAYS_EN[x.dow].slice(0, 3)} ${x.date.getDate()}</button>`).join('')}</div>`;
+  h += slots ? `<div class="slots">${slots.map((s) => `<div class="slot ${s.status}" title="${s.booking ? esc(s.booking.patient) : ''}">${time12(s.time)}${s.booking ? '<br><small>' + esc(s.booking.patient) + '</small>' : ''}</div>`).join('')}</div>
+   <div class="note">Green = free · grey = already booked · red = booked by the assistant just now. The assistant reads this same schedule, so it can never double-book.</div>`
+    : `<div class="note">${esc(doc.en)} does not work on ${DAYS_EN[d.dow]}. Working days: ${doc.days.map((x) => DAYS_EN[x]).join(', ')}.</div>`;
+  h += `<div class="sec">Bookings made by the assistant</div>${S.bookings.map(bookingCard).join('') || '<div class="small">None yet. Try booking from the customer phone.</div>'}`;
+  return h;
+}
+function infoHtml() {
+  if (S.biz === 'restaurant') {
+    const R = S.info.restaurant;
+    return `<div class="note">✏️ This is all the owner sets up. Change anything (for example a price) and the assistant uses it from the next message. No retraining, no technical work.</div>
+    <div class="sec">Menu & prices (EGP)</div>
+    <table class="t"><tr><th>Item</th><th>English</th><th>Prices</th></tr>
+     ${R.menu.map((m, i) => `<tr><td class="ar" style="text-align:right">${esc(m.ar)}</td><td>${esc(m.en)}</td><td>${Object.entries(m.sizes).map(([s, p]) => `${s !== 'عادي' ? `<span class="ar">${s}</span> ` : ''}<input type="number" data-menu="${i}" data-size="${s}" value="${p}">`).join(' ')}</td></tr>`).join('')}</table>
+    <div class="sec">Delivery areas</div>
+    <table class="t"><tr><th>Area</th><th>Fee (EGP)</th><th>Minutes</th></tr>${R.areas.map((a, i) => `<tr><td>${esc(a.en)} · <span class="ar">${esc(a.ar)}</span></td><td><input type="number" data-area="${i}" data-k="fee" value="${a.fee}"></td><td><input type="number" data-area="${i}" data-k="minutes" value="${a.minutes}"></td></tr>`).join('')}</table>
+    <div class="sec">General</div>
+    <div class="field"><span>Opening hours</span><input data-gen="hours" value="${esc(R.hours)}"></div>
+    <div class="field"><span>Payment</span><input data-gen="payment" value="${esc(R.payment)}"></div>
+    <div class="field"><span>Minimum order (EGP)</span><input type="number" data-gen="minOrder" value="${R.minOrder}"></div>
+    ${faqHtml(R)}`;
+  }
+  const C = S.info.clinic;
+  return `<div class="note">✏️ This is all the clinic sets up. Change a fee or a doctor's hours and the assistant uses it from the next message.</div>
+  <div class="sec">Doctors</div>
+  <table class="t"><tr><th>Doctor</th><th>Specialty</th><th>New visit</th><th>Follow-up</th><th>Hours</th></tr>
+   ${C.doctors.map((d, i) => `<tr><td>${esc(d.en)}<br><small>${d.days.map((x) => DAYS_EN[x].slice(0, 3)).join(', ')}</small></td><td>${esc(d.specEn)}</td><td><input type="number" data-doc2="${i}" data-k="fee" value="${d.fee}"></td><td><input type="number" data-doc2="${i}" data-k="followup" value="${d.followup}"></td><td><input type="number" data-doc2="${i}" data-k="from" value="${d.from}" style="width:48px"> to <input type="number" data-doc2="${i}" data-k="to" value="${d.to}" style="width:48px"></td></tr>`).join('')}</table>
+  <div class="sec">General</div>
+  <div class="field"><span>Address</span><input data-gen="branch" value="${esc(C.branch)}"></div>
+  <div class="field"><span>Insurance</span><input data-gen="insurance" value="${esc(C.insurance)}"></div>
+  <div class="field"><span>Payment</span><input data-gen="payment" value="${esc(C.payment)}"></div>
+  ${faqHtml(C)}`;
+}
+function faqHtml(I) {
+  return `<div class="sec">Frequent questions</div><table class="t"><tr><th style="width:42%">Question</th><th>Approved answer</th></tr>${I.faq.map((f, i) => `<tr><td><input class="w" data-faq="${i}" data-k="q" value="${esc(f.q)}"></td><td><input class="w" data-faq="${i}" data-k="a" value="${esc(f.a)}"></td></tr>`).join('')}</table>
+  <button class="btn sm" style="margin-top:6px" id="addFaq">+ Add a question</button>`;
+}
+function reportsHtml() {
+  const M = MONTHLY[S.biz]; const max = Math.max(...M.bars.map((b) => b[1]));
+  const st = S.settings;
+  return `<div class="note">Sent automatically on the 1st of every month by ${st.reportChannel === 'email' ? 'email' : st.reportChannel === 'both' ? 'WhatsApp and email' : 'WhatsApp'} (change it in Assistant settings). The full version stays in this dashboard. Hypothetical numbers.</div>
+   ${reportCard()}
+   <div class="acc" style="margin-top:10px"><button class="btn red" id="repWa">Send to WhatsApp (preview)</button><button class="btn" id="repMail">Send by email (preview)</button><button class="btn" id="repPdf">Save as PDF</button><button class="btn" id="repXls">Download Excel</button></div>
+   <div class="sec">Most asked questions this month</div><div class="small">${M.topQuestions.map((q, i) => `${i + 1}. ${esc(q)}`).join('<br>')}</div>`;
+}
+function reportCard() {
+  const M = MONTHLY[S.biz]; const I = S.info[S.biz]; const max = Math.max(...M.bars.map((b) => b[1]));
+  return `<div class="rep"><div class="hd2"><div><div class="k1">Monthly results · ${M.month}</div><div class="k2">${esc(I.name)}, Nasr City</div></div><span class="tag new" style="background:#e9eef6;color:#0b2a5b">${M.plan} plan</span></div>
+   <div class="grid">${M.kpis.map((k) => `<div class="k"><b>${k.v}</b><span>${k.l}</span></div>`).join('')}</div>
+   <div class="small" style="padding:4px 16px 6px">${S.biz === 'restaurant' ? 'Missed calls by hour' : 'Calls by time of day'}</div>
+   <div class="bars">${M.bars.map((b) => `<div style="height:${Math.round((b[1] / max) * 100)}%"><span>${b[0]}</span></div>`).join('')}</div>
+   <div class="foot">Fee ${egp(M.fee)} · ${M.valueLabel} <b>${egp(M.value)} (${(M.value / M.fee).toFixed(1)}×)</b></div></div>`;
+}
+function assistantSettingsHtml() {
+  const st = S.settings;
+  const opt = (k, t, d) => `<label class="${st.answers === k ? 'on' : ''}"><input type="radio" name="ans" value="${k}" ${st.answers === k ? 'checked' : ''}><span><b>${t}</b><br><span class="small">${d}</span></span></label>`;
+  const rc = (k, t) => `<label class="${st.reportChannel === k ? 'on' : ''}"><input type="radio" name="rep" value="${k}" ${st.reportChannel === k ? 'checked' : ''}><span>${t}</span></label>`;
+  return `<div class="sec" style="margin-top:0">When should the assistant answer?</div>
+  <div class="radio">${opt('busy', 'When staff are busy (recommended)', 'Your staff answer first. If nobody picks up after 3 rings, or the line is busy, the assistant answers.')}${opt('after', 'Only after hours', 'Staff answer during opening hours; the assistant answers when you are closed.')}${opt('always', 'Always', 'The assistant answers every call and message straight away.')}</div>
+  <div class="sec">Monthly report delivery</div>
+  <div class="radio">${rc('whatsapp', 'WhatsApp (summary numbers only)')}${rc('email', 'Email: ' + esc(st.reportEmail))}${rc('both', 'Both')}</div>
+  <div class="sec">Hand-over to staff</div>
+  <div class="field"><span>Staff name shown</span><input data-gen="staffName" value="${esc(S.info[S.biz].staffName)}"></div>
+  <div class="note">Customers can always ask for a person. Calls the assistant hands over appear in "Needs staff" with a call-back button.</div>`;
+}
+function wirePane() {
+  const p = $('pane'); if (!p) return;
+  p.querySelectorAll('[data-open]').forEach((b) => b.onclick = (e) => { e.stopPropagation(); openConv(b.dataset.open); });
+  p.querySelectorAll('[data-acc]').forEach((b) => b.onclick = () => orderStep(+b.dataset.acc, 'prep'));
+  p.querySelectorAll('[data-out]').forEach((b) => b.onclick = () => orderStep(+b.dataset.out, 'out'));
+  p.querySelectorAll('[data-del]').forEach((b) => b.onclick = () => orderStep(+b.dataset.del, 'delivered'));
+  p.querySelectorAll('[data-seen]').forEach((b) => b.onclick = () => { const bk = S.bookings.find((x) => x.id === +b.dataset.seen); bk.status = 'seen'; renderOwner(); });
+  p.querySelectorAll('[data-doc]').forEach((b) => b.onclick = () => { S.bookDoc = b.dataset.doc; renderOwner(); });
+  p.querySelectorAll('[data-day]').forEach((b) => b.onclick = () => { S.bookDay = +b.dataset.day; renderOwner(); });
+  // approved info edits
+  const changed = (what, from, to) => { log('owner', `Owner updated approved info: ${what}`, `${from} → ${to} · used from the next message`); toast(`Saved: ${what} ${from} → ${to}. The assistant uses it now.`); renderBrain(); };
+  p.querySelectorAll('[data-menu]').forEach((inp) => inp.onchange = () => { const m = S.info.restaurant.menu[+inp.dataset.menu]; const old = m.sizes[inp.dataset.size]; m.sizes[inp.dataset.size] = Number(inp.value); changed(`${m.en}${inp.dataset.size !== 'عادي' ? ' (' + ({ 'كبير': 'large', 'وسط': 'medium', 'صغير': 'small' }[inp.dataset.size]) + ')' : ''} price`, old, inp.value); });
+  p.querySelectorAll('[data-area]').forEach((inp) => inp.onchange = () => { const a = S.info.restaurant.areas[+inp.dataset.area]; const old = a[inp.dataset.k]; a[inp.dataset.k] = Number(inp.value); changed(`${a.en} delivery ${inp.dataset.k}`, old, inp.value); });
+  p.querySelectorAll('[data-doc2]').forEach((inp) => inp.onchange = () => { const d = S.info.clinic.doctors[+inp.dataset.doc2]; const old = d[inp.dataset.k]; d[inp.dataset.k] = Number(inp.value); changed(`${d.en} ${inp.dataset.k}`, old, inp.value); });
+  p.querySelectorAll('[data-gen]').forEach((inp) => inp.onchange = () => { const I = S.info[S.biz]; const k = inp.dataset.gen; const old = I[k]; I[k] = inp.type === 'number' ? Number(inp.value) : inp.value; changed(k, old, inp.value); });
+  p.querySelectorAll('[data-faq]').forEach((inp) => inp.onchange = () => { const f = S.info[S.biz].faq[+inp.dataset.faq]; f[inp.dataset.k] = inp.value; changed('FAQ', '', inp.value.slice(0, 40)); });
+  const af = $('addFaq'); if (af) af.onclick = () => { S.info[S.biz].faq.push({ q: 'New question', a: 'Approved answer' }); renderOwner(); };
+  p.querySelectorAll('input[name=ans]').forEach((r) => r.onchange = () => { S.settings.answers = r.value; saveSettings(); log('owner', 'Owner changed when the assistant answers', { busy: 'when staff are busy', after: 'only after hours', always: 'always' }[r.value]); renderOwner(); });
+  p.querySelectorAll('input[name=rep]').forEach((r) => r.onchange = () => { S.settings.reportChannel = r.value; saveSettings(); renderOwner(); });
+  if ($('repWa')) { $('repWa').onclick = reportWhatsApp; $('repMail').onclick = reportEmail; $('repPdf').onclick = reportPdf; $('repXls').onclick = reportExcel; }
+}
+function orderStep(id, st) {
+  const o = S.orders.find((x) => x.id === id); if (!o) return; o.status = st;
+  const R = S.info.restaurant; const wa = getConv('restaurant', CUSTOMERS.restaurant.find((c) => c.phone === o.phone) || { id: 'x' + o.phone, name: o.customer, phone: o.phone }, 'whatsapp');
+  const txt = st === 'prep' ? `✅ ${R.nameAr}: طلبك رقم ${toAr(o.id)} اتقبل وبيتجهز، هيوصلك خلال ${toAr(o.eta || R.deliveryTime)} دقيقة.` : st === 'out' ? `🛵 ${R.nameAr}: طلبك رقم ${toAr(o.id)} خرج للتوصيل.` : null;
+  if (txt) { wa.messages.push({ from: 'conf', text: txt, t: new Date(), label: 'Automatic update' }); log('owner', `Staff ${st === 'prep' ? 'accepted' : 'sent out'} order #${o.id}`, 'customer notified automatically on WhatsApp'); }
+  renderAll();
+}
+
+// ------------------------------------------------------------- conversation drawer
+function openConv(id) {
+  const c = S.convs.find((x) => x.id === id); if (!c) return;
+  const I = S.info[c.biz];
+  const body = c.channel === 'call'
+    ? c.messages.map((m) => `<div class="m ${m.from === 'me' ? 'me' : 'bz'}"><span class="who" style="color:#5f6368">${m.from === 'me' ? esc(c.customer.name) : 'Assistant'}</span>${esc(m.text)}<small>${fmtT12(m.t)}</small></div>`).join('')
+    : c.messages.map(msgHtml).join('');
+  openModal(`<button class="x2" data-close>✕</button><div class="drawer"><h3>${esc(c.customer.name)} · ${maskPhone(c.customer.phone)}</h3>
+   <div class="small" style="margin-bottom:8px">${c.channel === 'call' ? '📞 Call transcript (recording available in the real product)' : '💬 WhatsApp conversation'} · ${statusChip(c.status)} ${c.handover ? ' · Reason: ' + esc(c.handover.reason) : ''}</div>
+   <div class="tr">${body || '<div class="small">No messages</div>'}</div>
+   ${c.channel === 'whatsapp' ? `<label class="f">Reply as ${esc(I.staffName)} (staff)</label><div style="display:flex;gap:6px"><input type="text" id="staffTxt" class="ar" placeholder="اكتب رد الموظف…" style="flex:1"><button class="btn red" id="staffSend">Send</button></div>
+   <div class="acc">${c.status === 'staff' ? '<button class="btn" id="handBack">Hand back to the assistant</button>' : '<button class="btn" id="takeOver">Take over (assistant stops replying)</button>'}</div>`
+    : `<div class="acc"><button class="btn red" id="callBack">📞 Call ${esc(c.customer.name)} back</button></div>`}</div>`);
+  const s = $('staffTxt');
+  if (s) {
+    const send = () => { const v = s.value.trim(); if (!v) return; c.messages.push({ from: 'staff', who: I.staffName, text: v, t: new Date() }); c.status = 'staff'; c.lastAt = new Date(); log('owner', `${I.staffName} (staff) replied from the dashboard`, 'the assistant pauses on this chat'); closeModal(); S.channel = 'whatsapp'; S.cust[c.biz] = c.customer.id; renderAll(); };
+    $('staffSend').onclick = send; s.onkeydown = (e) => { if (e.key === 'Enter') send(); }; s.focus();
+  }
+  if ($('takeOver')) $('takeOver').onclick = () => { c.status = 'staff'; log('owner', 'Staff took over the chat', 'assistant paused'); closeModal(); renderAll(); };
+  if ($('handBack')) $('handBack').onclick = () => { c.status = 'answered'; log('owner', 'Chat handed back to the assistant', ''); closeModal(); renderAll(); };
+  if ($('callBack')) $('callBack').onclick = () => { c.status = 'answered'; c.result = 'Called back by staff'; log('owner', 'Staff called the customer back', 'marked as handled'); closeModal(); renderAll(); };
+}
+
+// ------------------------------------------------------------- reports
+function reportWhatsApp() {
+  const M = MONTHLY[S.biz]; const I = S.info[S.biz];
+  const k = M.kpis;
+  const text = S.biz === 'restaurant'
+    ? `📊 ${I.nameAr}: نتائج شهر سبتمبر\n\n• ${toAr(450)} مكالمة ورسالة كانت هتضيع، المساعد رد عليها\n• ${toAr(60)} طلب اتسجل\n• ${toAr('18,000')} جنيه مبيعات رجعت\n• حوالي ${toAr('3,600')} جنيه عمولة تطبيقات وفرتها\n\nالاشتراك ${toAr('2,500')} جنيه، والربح من الطلبات دي ${toAr('7,200')} جنيه.\nالتقرير الكامل في لوحة التحكم.`
+    : `📊 ${I.nameAr}: نتائج شهر سبتمبر\n\n• ${toAr(212)} مكالمة ورسالة كانت هتضيع، المساعد رد عليها\n• ${toAr(38)} حجز اتعمل\n• ${toAr('14,900')} جنيه قيمة الكشوفات\n• ${toAr(64)} مكالمة بعد مواعيد العيادة\n\nالتقرير الكامل في لوحة التحكم.`;
+  openModal(`<button class="x2" data-close>✕</button><h3>What the owner receives on WhatsApp</h3><div class="small" style="margin-bottom:10px">Summary numbers only (no customer details), for privacy. Sent on the 1st of every month.</div>
+   <div class="wapre"><div class="m bz" style="max-width:100%">${esc(text)}<small>9:00 AM</small></div></div>`);
+  log('reply', 'Monthly report sent to the owner on WhatsApp', 'summary numbers only');
+}
+function reportEmail() {
+  openModal(`<button class="x2" data-close>✕</button><h3>Email to ${esc(S.settings.reportEmail)}</h3><div class="small">Subject: ${esc(S.info[S.biz].name)}: your September results · PDF and Excel attached</div><div style="margin-top:10px">${reportCard()}</div>
+   <div class="small" style="margin-top:8px">📎 report-september.pdf · 📎 september-details.xlsx</div>`);
+  log('reply', 'Monthly report sent by email', 'PDF + Excel attached');
+}
+function reportPdf() { $('printArea').innerHTML = `<div style="padding:30px;max-width:720px;font-family:Segoe UI,Arial">${reportCard()}</div>`; window.print(); }
+function reportExcel() {
+  const rows = [];
+  if (S.biz === 'restaurant') {
+    rows.push(['Order', 'Time', 'Customer', 'Phone', 'Channel', 'Items', 'Subtotal EGP', 'Delivery EGP', 'Total EGP', 'Area', 'Status']);
+    const all = S.orders.filter((o) => o.biz === 'restaurant').concat(SEED_ORDERS.map((o) => ({ ...o, time: new Date(Date.now() - o.minsAgo * 60000) })));
+    all.forEach((o) => rows.push([o.id, o.time.toLocaleString('en-GB'), o.customer, o.phone, o.channel, o.lines.map((l) => `${l.qty} x ${l.en}`).join('; '), o.subtotal, o.fee, o.total, o.area, o.status]));
+  } else {
+    rows.push(['Booking', 'Doctor', 'Date', 'Time', 'Patient', 'Phone', 'Channel', 'Type', 'Fee EGP']);
+    S.bookings.forEach((b) => rows.push([b.id, b.doctor, b.date, b.time, b.patient, b.phone, b.channel, b.type, b.fee]));
+  }
+  rows.push([]); rows.push(['Conversations']); rows.push(['Time', 'Customer', 'Channel', 'Status', 'Summary']);
+  liveConvs().forEach((c) => rows.push([c.lastAt.toLocaleString('en-GB'), c.customer.name, c.channel, c.status, c.result || '']));
+  const csv = '﻿' + rows.map((r) => r.map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `${S.info[S.biz].name.replace(/\W+/g, '-').toLowerCase()}-report.csv`; document.body.appendChild(a); a.click(); a.remove();
+  toast('Excel file downloaded (opens in Excel)');
+}
+
+// ------------------------------------------------------------- modal helpers
+function openModal(html) { $('modalBox').innerHTML = html; $('modal').classList.add('on'); $('modalBox').querySelectorAll('[data-close]').forEach((b) => b.onclick = closeModal); }
+function closeModal() { $('modal').classList.remove('on'); }
+
+function openSettings() {
+  const st = S.settings;
+  const opts = (list, cur) => (list.length ? list : [cur].filter(Boolean)).map((m) => `<option ${m === cur ? 'selected' : ''}>${esc(m)}</option>`).join('');
+  openModal(`<button class="x2" data-close>✕</button><h3>Settings</h3><div class="small">Your key stays in this browser on this device only.</div>
+   <label class="f">Gemini API key (from aistudio.google.com)</label>
+   <div style="display:flex;gap:6px"><input type="password" id="key" value="${esc(st.apiKey)}" placeholder="AIza…" style="flex:1"><button class="btn" id="showKey">Show</button></div>
+   <div style="display:flex;gap:6px;margin-top:8px"><button class="btn red" id="connect">Connect & test</button><span id="connMsg"></span></div>
+   <label class="f">Brain</label>
+   <div class="radio"><label class="${st.mode === 'live' ? 'on' : ''}"><input type="radio" name="mode" value="live" ${st.mode === 'live' ? 'checked' : ''}><span><b>Live: Gemini</b><br><span class="small">Real AI. Anyone can ask anything. Needs internet.</span></span></label>
+   <label class="${st.mode === 'offline' ? 'on' : ''}"><input type="radio" name="mode" value="offline" ${st.mode === 'offline' ? 'checked' : ''}><span><b>Offline demo</b><br><span class="small">Rule-based backup that handles the demo shortcuts. Works with no internet.</span></span></label></div>
+   <label class="f">Text model (WhatsApp)</label><select id="tm">${opts(st.textModels, st.textModel)}</select>
+   <label class="f">Voice model (calls)</label><select id="lm">${opts(st.liveModels, st.liveModel)}</select>
+   <label class="f">Assistant voice</label><select id="voice">${['Kore', 'Aoede', 'Leda', 'Zephyr', 'Sulafat', 'Achernar', 'Despina', 'Gacrux', 'Puck', 'Charon', 'Fenrir', 'Orus', 'Algieba', 'Umbriel'].map((v) => `<option ${v === st.voice ? 'selected' : ''}>${v}</option>`).join('')}</select>
+   <label class="f">Call engine</label><select id="ce">
+     <option value="live" ${st.callEngine === 'live' ? 'selected' : ''}>A. Gemini Live: real-time voice, fastest</option>
+     <option value="tts" ${st.callEngine === 'tts' ? 'selected' : ''}>B. Gemini voice with Cairo accent (Chrome listens, Gemini speaks)</option>
+     <option value="browser" ${st.callEngine === 'browser' ? 'selected' : ''}>C. Chrome voice (backup, formal accent)</option></select>
+   <label class="f">Gemini speech model (engine B)</label><select id="ttm">${opts(st.ttsModels, st.ttsModel)}</select>
+   <div style="display:flex;gap:6px;margin-top:8px;align-items:center"><button class="btn" id="testVoice">▶ Test voice</button><span class="small">Plays the greeting with the engine and voice selected above</span></div>
+   <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:12.5px"><input type="checkbox" id="barge" ${st.bargeIn ? 'checked' : ''}> Allow interrupting the assistant (only with headphones, otherwise it hears itself)</label>
+   <div style="margin-top:14px;text-align:right"><button class="btn dark" id="saveSet">Save</button></div>`);
+  $('showKey').onclick = () => { const k = $('key'); k.type = k.type === 'password' ? 'text' : 'password'; };
+  $('connect').onclick = async () => {
+    const key = $('key').value.trim(); const msg = $('connMsg'); if (!key) { msg.innerHTML = '<div class="okmsg bad">Paste your key first</div>'; return; }
+    msg.innerHTML = '<span class="small">Connecting…</span>';
+    try {
+      const m = await listModels(key);
+      if (!m.text.length) throw new Error('No Flash text model available for this key');
+      st.apiKey = key; st.textModels = m.text; st.liveModels = m.live; st.ttsModels = m.tts; st.textModel = m.text[0]; st.liveModel = m.live[0] || ''; st.ttsModel = m.tts[0] || ''; st.mode = 'live'; st.noThinkingCfg = false; saveSettings();
+      msg.innerHTML = `<div class="okmsg ok">✓ Connected. Text: ${esc(st.textModel)} · Live voice: ${esc(st.liveModel || 'none')} · Speech: ${esc(st.ttsModel || 'none')}</div>`;
+      $('tm').innerHTML = opts(st.textModels, st.textModel); $('lm').innerHTML = opts(st.liveModels, st.liveModel); $('ttm').innerHTML = opts(st.ttsModels, st.ttsModel);
+      document.querySelector('input[name=mode][value=live]').checked = true; renderAll();
+    } catch (e) { msg.innerHTML = `<div class="okmsg bad">✕ ${esc(e.message)}</div>`; }
+  };
+  $('testVoice').onclick = () => { const tmp = { key: $('key').value.trim(), engine: $('ce').value, voice: $('voice').value, live: $('lm').value, tts: $('ttm').value }; testVoice(tmp); };
+  $('saveSet').onclick = () => {
+    st.apiKey = $('key').value.trim(); st.mode = document.querySelector('input[name=mode]:checked').value; st.textModel = $('tm').value; st.liveModel = $('lm').value; st.voice = $('voice').value; st.callEngine = $('ce').value; st.ttsModel = $('ttm').value; st.bargeIn = $('barge').checked; st.noThinkingCfg = false;
+    if (st.mode === 'live' && (!st.apiKey || !st.textModel)) { toast('Connect your key first, or choose Offline', 'warn'); return; }
+    saveSettings(); closeModal(); renderAll(); toast(st.mode === 'live' ? 'Live mode: Gemini' : 'Offline demo mode');
+  };
+}
+function openHow() {
+  openModal(`<button class="x2" data-close>✕</button><h3>How it works</h3>
+   <div class="flow"><span>Customer calls / WhatsApps the usual number</span>→<span>010Hotline: staff first, then the assistant</span>→<span>Assistant: Gemini + approved info + tools</span>→<span>Order / booking saved</span>→<span>Owner dashboard + reports</span></div>
+   <div class="howgrid">
+    <div><b>1. The brain</b><br>Google Gemini, the model family Vodafone's AI Concierge runs on. Fast "Flash" model for chat, Gemini Live for real-time voice.</div>
+    <div><b>2. Instructions</b><br>Speak Egyptian Arabic, short and polite. Use only approved information. Never invent a price. Hand over when unsure. Never give medical advice.</div>
+    <div><b>3. Approved information</b><br>What the owner types in "Approved info" (menu, prices, hours, doctors, fees). Sent with every message, so a change works immediately.</div>
+    <div><b>4. Tools (what makes it an agent)</b><br>quote_order, place_order, check_free_slots, book_appointment, hand_over_to_staff. Gemini decides when to use them; the code calculates prices and checks the schedule, so the AI cannot invent them.</div>
+   </div>
+   <div class="sec">Prototype vs. real product</div>
+   <table class="t"><tr><th>In this prototype</th><th>In production</th></tr>
+    <tr><td>Your device microphone</td><td>The SME's own number through 010Hotline</td></tr>
+    <tr><td>WhatsApp-style screen</td><td>WhatsApp Business API</td></tr>
+    <tr><td>Gemini API, visitor's own key in the browser</td><td>AI Concierge on Vodafone's Google Cloud platform</td></tr>
+    <tr><td>Data kept in the browser</td><td>Secure database, Vodafone Business dashboard login</td></tr>
+    <tr><td>Report previews</td><td>Scheduled WhatsApp / email sending</td></tr></table>`);
+}
+
+// ------------------------------------------------------------- render all + boot
+function renderAll() { renderTop(); renderCustomer(); renderBrain(); renderOwner(); }
+function boot() {
+  document.querySelectorAll('#bizSeg button').forEach((b) => b.onclick = () => { if (S.call) { toast('End the call first'); return; } S.biz = b.dataset.biz; renderAll(); });
+  $('btnBrain').onclick = () => { S.showBrain = !S.showBrain; renderAll(); };
+  $('btnSettings').onclick = openSettings; $('modePill').onclick = openSettings;
+  $('btnHow').onclick = openHow;
+  $('btnReset').onclick = () => openModal(`<h3>Reset the demo?</h3><div class="small" style="margin:8px 0 14px">Clears today's live conversations, orders and bookings and restores the original approved info. Your Gemini key and settings stay.</div><div style="text-align:right;display:flex;gap:8px;justify-content:flex-end"><button class="btn" data-close>Cancel</button><button class="btn red" id="doReset">Reset</button></div>`) || ($('doReset').onclick = () => location.reload());
+  $('modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
+  setInterval(() => { if (S.flash && Date.now() - S.flash.t > 4000) S.flash = null; }, 1000);
+  if (S.settings.mode === 'live' && !S.settings.apiKey) S.settings.mode = 'offline';
+  if (window.innerWidth < 1250) { S.showBrain = false; setTimeout(() => toast('Small screen: panel 2 is hidden. Press ◧ to show it, or press F11 for full screen.'), 1500); }
+  renderAll();
+  if (!S.settings.apiKey) setTimeout(() => toast('Tip: open ⚙ Settings and paste your Gemini key to switch from offline to live AI'), 800);
+}
+
+// ===================================================================
+// CALLS: Gemini Live (real-time voice) with Chrome-voice backup
+// ===================================================================
+const BIZ_PHONE = { restaurant: '0100 555 1234', clinic: '0100 555 9876' };
+function b64(buf) { let s = ''; const b = new Uint8Array(buf); for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
+
+function callScreenHtml() {
+  const I = S.info[S.biz]; const initials = S.biz === 'restaurant' ? 'ZK' : 'DA'; const c = S.call;
+  if (!c) {
+    const last = S.convs.find((x) => x.biz === S.biz && x.channel === 'call' && x.ended && x.customer.id === S.cust[S.biz]);
+    const wa = last && S.convs.find((x) => x.biz === S.biz && x.channel === 'whatsapp' && x.customer.id === last.customer.id);
+    const conf = wa && [...wa.messages].reverse().find((m) => m.from === 'conf');
+    return `<div class="phone"><div class="scr call"><div class="dial">
+      <div class="bigav">${initials}</div><div class="cn">${esc(I.name)}</div><div class="num">${BIZ_PHONE[S.biz]} · the usual business number</div>
+      <button class="bigcall" id="btnCall" title="Call">📞</button>
+      <div class="hint">Press to call as ${esc(customer().name)}. Speak Egyptian Arabic into your microphone. Live captions appear on screen.</div>
+    </div></div></div>
+    ${conf ? `<div class="after"><b>After the call</b> ${esc(last.customer.name)} received by SMS / WhatsApp:<div class="ar" style="background:#d9fdd3;border-radius:6px;padding:4px 8px;margin-top:4px;white-space:pre-wrap">${esc(conf.text)}</div></div>` : ''}`;
+  }
+  return `<div class="phone"><div class="scr call">
+    <div class="ch"><div class="bigav">${initials}</div><div class="cn">${esc(I.name)}</div><div class="cs">${BIZ_PHONE[S.biz]} · <span id="ctime">${c.state === 'ringing' ? 'ringing…' : '00:00'}</span></div>
+      <div class="wave" id="wave">${'<i></i>'.repeat(14)}</div><div class="spk" id="spk">${c.state === 'ringing' ? 'Ringing the staff first…' : ''}</div></div>
+    <div class="cap" id="cap"><div class="capt">LIVE CAPTIONS · ${engineLabel(c.engine)}</div>${captionsHtml()}</div>
+    <div class="ctl"><button id="cMute" class="${c.muted ? 'act' : ''}">${c.muted ? '🔇' : '🎙'}<small>${c.muted ? 'muted' : 'mute'}</small></button><button id="cSpk">🔊<small>speaker</small></button><button class="end" id="cEnd">📞<small>end</small></button></div>
+  </div></div>`;
+}
+function captionsHtml() {
+  const c = S.call; if (!c) return '';
+  return c.caps.map((x, i) => `<div class="l ${x.who} ${i === c.caps.length - 1 ? 'last' : ''}"><b>${x.who === 'a' ? 'Assistant' : esc(c.conv.customer.name)}</b>${esc(x.text)}</div>`).join('');
+}
+function renderCaptions() { const el = $('cap'); if (!el || !S.call) return; el.innerHTML = `<div class="capt">LIVE CAPTIONS · ${engineLabel(S.call.engine)}</div>${captionsHtml()}`; el.scrollTop = el.scrollHeight; }
+function setSpk(t) { const el = $('spk'); if (el) el.textContent = t; }
+function wireCall() {
+  const b = $('btnCall'); if (b) b.onclick = startCall;
+  if ($('cEnd')) $('cEnd').onclick = endCall;
+  if ($('cMute')) $('cMute').onclick = () => { S.call.muted = !S.call.muted; if (S.call.engine !== 'live') { if (S.call.muted) stopListen(); else listen(); } renderCustomer(); };
+  if ($('cSpk')) $('cSpk').onclick = () => toast('Sound plays through your speakers');
+}
+
+// ------------------------------------------------------------- start / end
+async function startCall() {
+  const cust = customer(); const conv = getConv(S.biz, cust, 'call', true);
+  const st = S.settings; const liveOk = st.mode === 'live' && st.apiKey;
+  const call = S.call = { conv, caps: [], pending: [], state: 'ringing', start: null, muted: false, engine: liveOk ? (st.callEngine === 'live' && st.liveModel ? 'live' : st.callEngine !== 'browser' && st.ttsModel ? 'tts' : 'browser') : 'offline', sources: [], nextTime: 0, level: 0 };
+  renderCustomer(); renderOwner();
+  log('call', `Call from ${cust.name} to ${S.info[S.biz].name}'s usual number`, maskPhone(cust.phone));
+  // unlock audio + mic inside the click
+  try {
+    call.outCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+    if (call.engine === 'live') {
+      call.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
+    }
+  } catch (e) { toast('Microphone blocked: allow it in Chrome (lock icon in the address bar). You can still use the shortcuts.', 'warn'); call.noMic = true; }
+  call.wave = setInterval(animateWave, 110);
+  const mode = st.answers;
+  setTimeout(async () => {
+    if (S.call !== call) return;
+    if (mode === 'always') log('hotline', '010Hotline → assistant answers straight away', 'owner setting: "always"');
+    else log('hotline', `010Hotline: staff line busy, rang 3 times → passed to the assistant`, `owner setting: "${mode === 'busy' ? 'when staff are busy' : 'only after hours'}"`);
+    call.state = 'connected'; call.start = Date.now(); renderCustomer();
+    call.timer = setInterval(() => { const el = $('ctime'); if (el && call.start) { const s = Math.floor((Date.now() - call.start) / 1000); el.textContent = `${pad(Math.floor(s / 60))}:${pad(s % 60)}`; } }, 500);
+    if (call.engine === 'live') {
+      try { await startLive(call); log('gemini', 'Gemini Live connected: listens and speaks Egyptian Arabic', st.liveModel); return; }
+      catch (e) { console.warn(e); const nxt = st.ttsModel ? 'tts' : 'browser'; log('warn', `Gemini Live unavailable → ${nxt === 'tts' ? 'Gemini speech voice' : 'Chrome voice'}`, String(e.message || e).slice(0, 120)); toast('Live voice unavailable (' + String(e.message || e).slice(0, 60) + '). Switched to ' + (nxt === 'tts' ? 'Gemini speech voice.' : 'Chrome voice.'), 'warn'); cleanupLive(call); call.engine = nxt; renderCaptions(); }
+    }
+    // browser / offline engine: greet, then listen
+    const g = greetingFor(S.biz); addCap('a', g); conv.messages.push({ from: 'bz', text: g, t: new Date() });
+    speak(g, () => listen());
+  }, 1600);
+}
+function endCall() {
+  const call = S.call; if (!call) return; call.ending = true;
+  clearInterval(call.timer); clearInterval(call.wave);
+  stopListen(); try { speechSynthesis.cancel(); } catch (e) { } try { call.ttsSrc && call.ttsSrc.stop(); } catch (e) { }
+  finishCaptions(call);
+  cleanupLive(call);
+  try { call.outCtx && call.outCtx.close(); } catch (e) { }
+  const secs = call.start ? Math.round((Date.now() - call.start) / 1000) : 0;
+  call.conv.ended = true; call.conv.lastAt = new Date();
+  if (call.conv.status === 'open' && call.conv.messages.length > 1) call.conv.status = 'answered';
+  if (!call.conv.result) { const lastC = call.conv.messages.filter((m) => m.from === 'me').slice(-1)[0]; call.conv.result = lastC ? lastC.text : 'Call answered'; }
+  log('call', 'Call ended', `call length ${Math.floor(secs / 60)} min ${secs % 60} s`);
+  S.call = null; call.pending.forEach((f) => f());
+  if (!call.conv.messages.length) S.convs = S.convs.filter((x) => x !== call.conv);
+  renderAll();
+}
+
+// ------------------------------------------------------------- captions
+function addCap(who, text) { const c = S.call; if (!c) return; c.caps.push({ who, text }); renderCaptions(); }
+function finishCaptions(call) {
+  if (call.curC != null) { const t = call.caps[call.curC].text.trim(); if (t) { call.conv.messages.push({ from: 'me', text: t, t: new Date() }); } call.curC = null; }
+  if (call.curA != null) { const t = call.caps[call.curA].text.trim(); if (t) call.conv.messages.push({ from: 'bz', text: t, t: new Date() }); call.curA = null; }
+}
+
+// ------------------------------------------------------------- wave animation
+function isPlaying(call) { return call.outCtx && call.nextTime > call.outCtx.currentTime - 0.35; }
+function animateWave() {
+  const call = S.call; const w = $('wave'); if (!call || !w) return;
+  const speaking = call.engine === 'live' ? isPlaying(call) : call.tts;
+  const userLvl = call.engine === 'live' ? call.level : (call.listening ? 0.15 : 0);
+  w.classList.toggle('on', !!speaking);
+  w.querySelectorAll('i').forEach((i) => { const h = speaking ? 6 + Math.random() * 22 : userLvl > 0.02 ? 4 + Math.random() * Math.min(24, userLvl * 120) : 5; i.style.height = h + 'px'; i.style.background = speaking ? '#25d366' : userLvl > 0.02 ? '#9fd4ff' : '#5f6368'; });
+  if (call.state === 'connected') setSpk(speaking ? 'Assistant speaking…' : call.muted ? 'Microphone muted' : call.thinking ? 'Thinking…' : 'Listening… speak now');
+}
+
+// ------------------------------------------------------------- Gemini Live
+function liveSystemPrompt(conv) {
+  const g = greetingFor(conv.biz);
+  return buildSystemPrompt(conv).replace(/You already greeted the caller with: "[^"]*"/, `When the call connects, greet the caller first with exactly: "${g}"`)
+    + '\n\nVOICE: speak like a friendly Egyptian receptionist, natural pace, short sentences. Always speak Egyptian Arabic unless the caller speaks English.';
+}
+function startLive(call) {
+  const st = S.settings;
+  return new Promise((resolve, reject) => {
+    if (call.noMic) { reject(new Error('no microphone')); return; }
+    const ws = new WebSocket(`wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=${encodeURIComponent(st.apiKey)}`);
+    call.ws = ws; let ready = false;
+    const to = setTimeout(() => { if (!ready) { try { ws.close(); } catch (e) { } reject(new Error('no answer from Gemini Live')); } }, 9000);
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ setup: {
+        model: 'models/' + st.liveModel,
+        generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: st.voice || 'Kore' } } } },
+        systemInstruction: { parts: [{ text: liveSystemPrompt(call.conv) }] },
+        tools: [{ functionDeclarations: toolDecls(call.conv.biz) }],
+        inputAudioTranscription: {}, outputAudioTranscription: {},
+      } }));
+    };
+    ws.onmessage = async (ev) => {
+      let msg; try { msg = JSON.parse(typeof ev.data === 'string' ? ev.data : await ev.data.text()); } catch (e) { return; }
+      if (msg.setupComplete) {
+        ready = true; clearTimeout(to);
+        startMic(call);
+        ws.send(JSON.stringify({ clientContent: { turns: [{ role: 'user', parts: [{ text: '(The call has just connected. Greet the caller now.)' }] }], turnComplete: true } }));
+        resolve(); return;
+      }
+      handleLive(call, msg);
+    };
+    ws.onclose = (e) => {
+      clearTimeout(to);
+      if (!ready) reject(new Error(e.reason || `connection closed (${e.code})`));
+      else if (S.call === call && !call.ending) { log('warn', 'Voice connection closed', e.reason || String(e.code)); toast('Voice connection closed: ' + (e.reason || e.code), 'warn'); endCall(); }
+    };
+  });
+}
+function startMic(call) {
+  if (!call.stream) return;
+  const ctx = call.inCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+  const src = ctx.createMediaStreamSource(call.stream);
+  const proc = call.proc = ctx.createScriptProcessor(2048, 1, 1);
+  proc.onaudioprocess = (e) => {
+    const f = e.inputBuffer.getChannelData(0); let peak = 0;
+    const out = new Int16Array(f.length);
+    for (let i = 0; i < f.length; i++) { const s = Math.max(-1, Math.min(1, f[i])); out[i] = s < 0 ? s * 0x8000 : s * 0x7fff; const a = Math.abs(s); if (a > peak) peak = a; }
+    call.level = peak;
+    if (!call.ws || call.ws.readyState !== 1 || call.muted) return;
+    if (!S.settings.bargeIn && isPlaying(call)) return; // half-duplex: do not let it hear itself
+    call.ws.send(JSON.stringify({ realtimeInput: { audio: { data: b64(out.buffer), mimeType: 'audio/pcm;rate=16000' } } }));
+  };
+  src.connect(proc); proc.connect(ctx.destination);
+}
+function playPcm(call, data, mime) {
+  const rate = parseInt((/rate=(\d+)/.exec(mime || '') || [])[1] || '24000', 10);
+  const bin = atob(data); const n = bin.length >> 1; if (!n) return;
+  const buf = call.outCtx.createBuffer(1, n, rate); const ch = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) { let v = bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8); if (v >= 32768) v -= 65536; ch[i] = v / 32768; }
+  const s = call.outCtx.createBufferSource(); s.buffer = buf; s.connect(call.outCtx.destination);
+  const t = Math.max(call.outCtx.currentTime + 0.04, call.nextTime); s.start(t); call.nextTime = t + buf.duration;
+  call.sources.push(s); s.onended = () => { call.sources = call.sources.filter((x) => x !== s); };
+}
+function stopPlayback(call) { call.sources.forEach((s) => { try { s.stop(); } catch (e) { } }); call.sources = []; call.nextTime = 0; }
+function handleLive(call, msg) {
+  if (S.call !== call) return;
+  const sc = msg.serverContent;
+  if (sc) {
+    if (sc.inputTranscription && sc.inputTranscription.text) {
+      if (call.curA != null) { finishA(call); }
+      if (call.curC == null) { call.caps.push({ who: 'c', text: '' }); call.curC = call.caps.length - 1; }
+      call.caps[call.curC].text += sc.inputTranscription.text; renderCaptions();
+    }
+    if (sc.outputTranscription && sc.outputTranscription.text) {
+      if (call.curC != null) finishC(call);
+      if (call.curA == null) { call.caps.push({ who: 'a', text: '' }); call.curA = call.caps.length - 1; }
+      call.caps[call.curA].text += sc.outputTranscription.text; renderCaptions();
+    }
+    if (sc.modelTurn && sc.modelTurn.parts) {
+      for (const p of sc.modelTurn.parts) {
+        if (p.inlineData && p.inlineData.data) playPcm(call, p.inlineData.data, p.inlineData.mimeType);
+      }
+    }
+    if (sc.interrupted) { stopPlayback(call); log('in', 'Caller interrupted: assistant stopped talking', ''); }
+    if (sc.turnComplete) { if (call.curC != null) finishC(call); finishA(call); }
+  }
+  if (msg.toolCall && msg.toolCall.functionCalls) {
+    if (call.curC != null) finishC(call);
+    const responses = msg.toolCall.functionCalls.map((fc) => ({ id: fc.id, name: fc.name, response: execTool(call.conv, fc.name, fc.args || {}) }));
+    try { call.ws.send(JSON.stringify({ toolResponse: { functionResponses: responses } })); } catch (e) { }
+    renderOwner(); renderBrain();
+  }
+}
+function finishC(call) {
+  const t = call.caps[call.curC].text.trim(); call.curC = null;
+  if (t) { call.conv.messages.push({ from: 'me', text: t, t: new Date() }); call.conv.lastAt = new Date(); log('in', `${call.conv.customer.name} said (speech recognised)`, t.length > 70 ? t.slice(0, 70) + '…' : t); }
+}
+function finishA(call) {
+  if (call.curA == null) return; const t = call.caps[call.curA].text.trim(); call.curA = null;
+  if (t) { call.conv.messages.push({ from: 'bz', text: t, t: new Date() }); setStatusAfterReply(call.conv); }
+  renderOwner();
+}
+function cleanupLive(call) {
+  try { call.proc && (call.proc.onaudioprocess = null); } catch (e) { }
+  try { call.ws && call.ws.close(); } catch (e) { }
+  try { call.inCtx && call.inCtx.close(); } catch (e) { }
+  try { call.stream && call.stream.getTracks().forEach((t) => t.stop()); } catch (e) { }
+  stopPlayback(call); call.ws = null; call.inCtx = null; call.stream = null;
+}
+
+// ------------------------------------------------------------- Chrome voice engine (backup)
+let callRecog = null;
+function arabicVoice() { const v = speechSynthesis.getVoices(); return v.find((x) => x.lang === 'ar-EG') || v.find((x) => /^ar/i.test(x.lang) && /google/i.test(x.name)) || v.find((x) => /^ar/i.test(x.lang)) || null; }
+function engineLabel(e) { return { live: 'Gemini Live voice', tts: 'Gemini voice, Cairo accent', browser: 'Chrome voice', offline: 'offline' }[e] || e; }
+function findAudio(o) { if (!o || typeof o !== 'object') return null; const mt = o.mimeType || o.mime_type; if (typeof o.data === 'string' && mt && /audio/i.test(mt)) return { data: o.data, mime: mt }; for (const k in o) { const r = findAudio(o[k]); if (r) return r; } return null; }
+const TTS_STYLE = 'warm, friendly Egyptian Arabic accent from Cairo, like a polite receptionist on the phone, natural conversational pace';
+async function geminiSpeech(text, o) {
+  const H = { 'Content-Type': 'application/json', 'x-goog-api-key': o.key };
+  let err = '';
+  try {
+    const r = await fetch(`${GEMINI}/models/${o.model}:generateContent`, { method: 'POST', headers: H, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: `Say this in a ${TTS_STYLE}:\n${text}` }] }], generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: o.voice } } } } }) });
+    const j = await r.json().catch(() => ({})); const a = r.ok && findAudio(j); if (a) return a; err = j.error?.message || `HTTP ${r.status}`;
+  } catch (e) { err = e.message; }
+  const r2 = await fetch(`${GEMINI}/interactions`, { method: 'POST', headers: H, body: JSON.stringify({ model: o.model, input: [{ type: 'user_input', content: [{ type: 'text', text, annotations: [{ type: 'speech_metadata', style: TTS_STYLE }] }] }], response_format: { type: 'audio', mime_type: 'audio/wav', sample_rate: 24000 }, generation_config: { speech_config: [{ voice: o.voice }] } }) });
+  const j2 = await r2.json().catch(() => ({})); const a2 = r2.ok && findAudio(j2); if (a2) return a2;
+  throw new Error(j2.error?.message || err || 'no audio returned');
+}
+async function playB64(ctx, aud) {
+  const bin = atob(aud.data); const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  let buf;
+  if (/wav/i.test(aud.mime) || aud.data.startsWith('UklGR')) buf = await ctx.decodeAudioData(bytes.buffer.slice(0));
+  else { const rate = +((/rate=(\d+)/.exec(aud.mime) || [])[1] || 24000); const n = bytes.length >> 1; buf = ctx.createBuffer(1, n, rate); const ch = buf.getChannelData(0); const dv = new DataView(bytes.buffer); for (let i = 0; i < n; i++) ch[i] = dv.getInt16(2 * i, true) / 32768; }
+  return new Promise((res) => { const s = ctx.createBufferSource(); s.buffer = buf; s.connect(ctx.destination); s.onended = res; s.start(); if (S.call) S.call.ttsSrc = s; });
+}
+function speak(text, done) {
+  const call = S.call; if (!call) return;
+  if (call.engine === 'tts') {
+    const st = S.settings; call.thinking = true;
+    geminiSpeech(text.replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF✅]/gu, ''), { key: st.apiKey, model: st.ttsModel, voice: st.voice })
+      .then((aud) => { call.thinking = false; if (S.call !== call) return; call.tts = true; return playB64(call.outCtx, aud); })
+      .then(() => { call.tts = false; if (S.call === call) done && done(); })
+      .catch((e) => { call.thinking = false; console.warn(e); log('warn', 'Gemini speech unavailable → Chrome voice for this reply', String(e.message || e).slice(0, 100)); call.engine = 'browser'; renderCaptions(); speak(text, done); });
+    return;
+  }
+  const clean = text.replace(/[\u{1F300}-\u{1FAFF}☀-➿✅]/gu, '');
+  let finished = false; const fin = () => { if (finished) return; finished = true; if (S.call === call) { call.tts = false; done && done(); } };
+  try {
+    const u = new SpeechSynthesisUtterance(clean); const v = arabicVoice();
+    if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = 'ar-EG'; if (!call.warnedVoice) { call.warnedVoice = true; toast('No Arabic voice found in Chrome: captions only', 'warn'); } }
+    u.rate = 1.02; u.onend = fin; u.onerror = fin; call.tts = true; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    setTimeout(fin, 1500 + clean.length * 110); // safety net
+  } catch (e) { fin(); }
+}
+function listen() {
+  const call = S.call; if (!call || call.muted || call.ending) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { setSpk('Use the shortcuts below (speech needs Chrome)'); return; }
+  stopListen();
+  const r = callRecog = new SR(); r.lang = 'ar-EG'; r.interimResults = true; r.continuous = false;
+  let got = '';
+  r.onresult = (e) => {
+    let s = ''; for (const x of e.results) s += x[0].transcript; got = s;
+    if (call.curC == null) { call.caps.push({ who: 'c', text: '' }); call.curC = call.caps.length - 1; }
+    call.caps[call.curC].text = s; renderCaptions();
+  };
+  r.onerror = (e) => { if (e.error === 'not-allowed') { toast('Microphone blocked: allow it in Chrome, or use the shortcuts', 'warn'); call.noMic = true; } };
+  r.onend = () => {
+    call.listening = false; if (callRecog === r) callRecog = null;
+    if (S.call !== call || call.ending) return;
+    if (got.trim()) { call.curC = null; handleUtterance(got.trim(), true); }
+    else if (!call.noMic && !call.thinking && !call.tts) setTimeout(listen, 250);
+  };
+  try { r.start(); call.listening = true; } catch (e) { }
+}
+function stopListen() { if (callRecog) { const r = callRecog; callRecog = null; try { r.onend = null; r.abort(); } catch (e) { } } if (S.call) S.call.listening = false; }
+async function handleUtterance(text, alreadyCaptioned) {
+  const call = S.call; if (!call) return;
+  stopListen();
+  if (!alreadyCaptioned) addCap('c', text);
+  call.conv.messages.push({ from: 'me', text, t: new Date() }); call.conv.lastAt = new Date();
+  log('in', `${call.conv.customer.name} said (speech recognised)`, text.length > 70 ? text.slice(0, 70) + '…' : text);
+  call.thinking = true;
+  let reply; try { reply = await assistantTurn(call.conv, text); } finally { call.thinking = false; }
+  if (S.call !== call) return;
+  addCap('a', reply); call.conv.messages.push({ from: 'bz', text: reply, t: new Date() }); setStatusAfterReply(call.conv);
+  renderOwner(); renderBrain();
+  speak(reply, () => listen());
+}
+function callSay(text) {
+  const call = S.call; if (!call || call.state !== 'connected') { toast('Wait for the call to connect'); return; }
+  if (call.engine === 'live' && call.ws && call.ws.readyState === 1) {
+    if (call.curA != null) finishA(call);
+    addCap('c', text); call.conv.messages.push({ from: 'me', text, t: new Date() });
+    log('in', `${call.conv.customer.name} said (demo shortcut)`, text);
+    stopPlayback(call);
+    call.ws.send(JSON.stringify({ clientContent: { turns: [{ role: 'user', parts: [{ text }] }], turnComplete: true } }));
+    return;
+  }
+  if (call.thinking) { toast('Wait for the reply first'); return; }
+  try { speechSynthesis.cancel(); } catch (e) { } try { call.ttsSrc && call.ttsSrc.stop(); } catch (e) { }
+  call.tts = false; handleUtterance(text, false);
+}
+
+// ------------------------------------------------------------- voice test (Settings)
+async function testVoice(o) {
+  const text = greetingFor(S.biz) + (S.biz === 'restaurant' ? ' النهارده عندنا كشري وحواوشي، والتوصيل لمدينة نصر خمسة وعشرين جنيه.' : ' الكشف عند دكتور أحمد بأربعمية جنيه، وفي مواعيد بكرة الساعة سبعة.');
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  try {
+    if (o.engine === 'browser') { const u = new SpeechSynthesisUtterance(text); const vv = arabicVoice(); if (vv) { u.voice = vv; u.lang = vv.lang; } else toast('No Arabic voice installed in Chrome', 'warn'); speechSynthesis.speak(u); return; }
+    if (!o.key) { toast('Connect your key first', 'warn'); return; }
+    if (o.engine === 'tts') { toast('Generating the voice…'); const a = await geminiSpeech(text, { key: o.key, model: o.tts, voice: o.voice }); await playB64(ctx, a); return; }
+    // Gemini Live: one short session that reads the sentence
+    toast('Connecting to Gemini Live…');
+    const ws = new WebSocket(`wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=${encodeURIComponent(o.key)}`);
+    const fake = { outCtx: ctx, nextTime: 0, sources: [] }; let ok = false;
+    const kill = setTimeout(() => { try { ws.close(); } catch (e) { } if (!ok) toast('Gemini Live did not answer: try engine B', 'warn'); }, 15000);
+    ws.onopen = () => ws.send(JSON.stringify({ setup: { model: 'models/' + o.live, generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: o.voice } } } }, systemInstruction: { parts: [{ text: `You are a friendly Egyptian receptionist. Speak only Egyptian Arabic with a Cairo accent. When asked, read the given sentence exactly, naturally.` }] } } }));
+    ws.onmessage = async (ev) => { const m = JSON.parse(typeof ev.data === 'string' ? ev.data : await ev.data.text());
+      if (m.setupComplete) { ws.send(JSON.stringify({ clientContent: { turns: [{ role: 'user', parts: [{ text: 'اقرا الجملة دي بالظبط بلهجة مصرية: ' + text }] }], turnComplete: true } })); return; }
+      const parts = m.serverContent?.modelTurn?.parts || []; parts.forEach((p) => { if (p.inlineData?.data) { ok = true; playPcm(fake, p.inlineData.data, p.inlineData.mimeType); } });
+      if (m.serverContent?.turnComplete) { clearTimeout(kill); setTimeout(() => ws.close(), 500); } };
+    ws.onclose = (e) => { if (!ok) toast('Gemini Live closed: ' + (e.reason || e.code) + '. Try engine B.', 'warn'); };
+  } catch (e) { toast('Voice test failed: ' + String(e.message || e).slice(0, 100), 'warn'); }
+}
+
+boot();
+</script>
+</body></html>
