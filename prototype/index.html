@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SME Assistant Prototype</title>
 <style>
-:root{--red:#e60000;--dark:#25282b;--grey:#5f6368;--line:#e3e3e3;--bg:#f4f5f7;--card:#fff;--green:#137333;--wa:#075e54}
+:root{--red:#0b2a5b;--dark:#25282b;--grey:#5f6368;--line:#e3e3e3;--bg:#eef2f8;--card:#fff;--green:#137333;--wa:#075e54}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{font-family:"Segoe UI",system-ui,-apple-system,Tahoma,"Noto Sans Arabic",Arial,sans-serif;color:var(--dark);background:var(--bg);font-size:14px;overflow:hidden}
@@ -22,7 +22,7 @@ input,textarea,select{font:inherit;color:inherit}
 .pill.live{background:#e6f4ea;color:var(--green)}.pill.off{background:#fff4e5;color:#b06000}
 .btn{border:1px solid #dadce0;border-radius:8px;padding:6px 11px;font-size:12.5px;font-weight:600;color:#3c4043;background:#fff;white-space:nowrap}
 .btn:hover{background:#f6f6f6}
-.btn.red{background:var(--red);border-color:var(--red);color:#fff}.btn.red:hover{background:#c90000}
+.btn.red{background:var(--red);border-color:#1e4e9c;color:#fff}.btn.red:hover{background:#071d40}
 .btn.dark{background:var(--dark);border-color:var(--dark);color:#fff}
 .btn.sm{padding:4px 9px;font-size:12px}
 /* layout */
@@ -30,7 +30,7 @@ input,textarea,select{font:inherit;color:inherit}
 .cols.nobrain{grid-template-columns:380px minmax(0,1fr)}
 .cols.nobrain #brainCol{display:none}
 .col{min-height:0;display:flex;flex-direction:column}
-.ct{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--red);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.ct{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:#1e4e9c;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px;flex:0 0 auto}
 .ct b{background:var(--red);color:#fff;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:0}
 .ct .x{margin-left:auto;color:var(--grey);font-weight:600;text-transform:none;letter-spacing:0;font-size:11.5px}
 /* customer column */
@@ -60,7 +60,7 @@ input,textarea,select{font:inherit;color:inherit}
 .inp textarea{overflow:hidden;flex:1;border:0;border-radius:20px;min-height:38px;max-height:90px;padding:9px 14px;resize:none;outline:none;direction:rtl;font-size:13.5px}
 .round{width:38px;height:38px;border-radius:50%;background:#00a884;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 auto}
 .round.rec{background:var(--red);animation:pu 1s infinite}
-@keyframes pu{50%{box-shadow:0 0 0 6px rgba(230,0,0,.25)}}
+@keyframes pu{50%{box-shadow:0 0 0 6px rgba(11,42,91,.25)}}
 .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;justify-content:center;flex:0 0 auto}
 .chips button{font-size:11.5px;background:#fff;border:1px dashed #b9bcc0;border-radius:12px;padding:3px 9px;color:#3c4043}
 .chips button:hover{border-color:var(--dark)}
@@ -104,7 +104,7 @@ input,textarea,select{font:inherit;color:inherit}
 .st:last-child:before{display:none}
 .st i{flex:0 0 22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:11px;font-weight:700;color:#fff;z-index:1}
 .st .t{color:var(--grey);font-size:11px;word-break:break-word}
-code{font-family:Consolas,ui-monospace,monospace;font-size:11.5px;background:#fdecec;color:#c00000;padding:1px 4px;border-radius:4px}
+code{font-family:Consolas,ui-monospace,monospace;font-size:11.5px;background:#e9eef6;color:#071d40;padding:1px 4px;border-radius:4px}
 /* owner column */
 .tabs{display:flex;gap:3px;margin-bottom:10px;flex-wrap:wrap;flex:0 0 auto}
 .tabs button{font-size:13px;font-weight:600;color:var(--grey);padding:6px 12px;border-radius:8px;position:relative}
@@ -113,13 +113,13 @@ code{font-family:Consolas,ui-monospace,monospace;font-size:11.5px;background:#fd
 .pane{flex:1;min-height:0;overflow-y:auto;padding-right:2px}
 .kp{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .kp div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px}
-.kp b{display:block;font-size:23px;color:var(--red);line-height:1.2}
+.kp b{display:block;font-size:23px;color:#1e4e9c;line-height:1.2}
 .kp span{font-size:11.5px;color:var(--grey)}
 .kp .bump b{animation:bump .8s}
 @keyframes bump{30%{transform:scale(1.25)}}
 .ord{margin-top:10px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 13px}
 .ord.new{border:2px solid var(--red);animation:glow 1.4s 2}
-@keyframes glow{50%{box-shadow:0 0 0 5px rgba(230,0,0,.18)}}
+@keyframes glow{50%{box-shadow:0 0 0 5px rgba(11,42,91,.18)}}
 .ord .h{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap}
 .tag.new{background:var(--red);color:#fff}.tag.prep{background:#e8f0fe;color:#1a56c4}.tag.out{background:#fff4e5;color:#b06000}.tag.done{background:#e6f4ea;color:var(--green)}
@@ -133,7 +133,7 @@ code{font-family:Consolas,ui-monospace,monospace;font-size:11.5px;background:#fd
 .row.click{cursor:pointer}.row.click:hover{background:#fafafa}
 .row .cv{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip{font-size:11px;font-weight:600;padding:3px 8px;border-radius:10px;text-align:center;white-space:nowrap}
-.g{background:#e6f4ea;color:var(--green)}.b{background:#e8f0fe;color:#1a56c4}.o{background:#fff4e5;color:#b06000}.r{background:#fdecec;color:#c00000}
+.g{background:#e6f4ea;color:var(--green)}.b{background:#e8f0fe;color:#1a56c4}.o{background:#fff4e5;color:#b06000}.r{background:#e9eef6;color:#071d40}
 .sec{font-size:13px;font-weight:700;margin:14px 0 6px}
 table.t{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12.5px}
 table.t th{background:#fafafa;color:var(--grey);font-size:11px;text-align:left;padding:7px 9px;font-weight:600}
@@ -147,7 +147,7 @@ table.t input.w{width:100%;text-align:left}
 .slot{font-size:12px;border-radius:7px;padding:5px;text-align:center;border:1px solid var(--line);background:#fff}
 .slot.booked{background:#f1f3f4;color:#9aa0a6;text-decoration:line-through}
 .slot.past{background:#fafafa;color:#c4c7c5}
-.slot.live{background:var(--red);color:#fff;border-color:var(--red);font-weight:600;text-decoration:none}
+.slot.live{background:var(--red);color:#fff;border-color:#1e4e9c;font-weight:600;text-decoration:none}
 .slot.free{border-color:#a8dab5;color:var(--green)}
 .days{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
 .radio{display:flex;flex-direction:column;gap:6px;font-size:13px}
@@ -160,12 +160,12 @@ table.t input.w{width:100%;text-align:left}
 .rep .k2{font-size:18px;font-weight:700}
 .rep .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 16px 8px}
 .rep .k{border-radius:10px;background:#f4f4f4;padding:8px 11px}
-.rep .k b{display:block;font-size:22px;color:var(--red)}.rep .k span{font-size:12px;color:#3c4043}
+.rep .k b{display:block;font-size:22px;color:#1e4e9c}.rep .k span{font-size:12px;color:#3c4043}
 .bars{display:flex;align-items:flex-end;gap:8px;height:70px;padding:0 16px}
 .bars div{flex:1;background:var(--red);border-radius:4px 4px 0 0;position:relative}
 .bars div span{position:absolute;bottom:-17px;left:0;right:0;text-align:center;font-size:10.5px;color:var(--grey)}
 .rep .foot{background:var(--dark);color:#fff;padding:10px 16px;font-size:13px;margin-top:26px}
-.rep .foot b{color:#ff8a8a}
+.rep .foot b{color:#9db8e3}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
 .modal.on{display:flex}
@@ -175,7 +175,7 @@ table.t input.w{width:100%;text-align:left}
 .box label.f{display:block;font-size:12.5px;font-weight:600;margin:12px 0 4px}
 .box input[type=password],.box input[type=text],.box select{width:100%;border:1px solid #dadce0;border-radius:8px;padding:7px 10px}
 .okmsg{font-size:12.5px;margin-top:8px;padding:7px 10px;border-radius:8px}
-.okmsg.ok{background:#e6f4ea;color:var(--green)}.okmsg.bad{background:#fdecec;color:#c00000}
+.okmsg.ok{background:#e6f4ea;color:var(--green)}.okmsg.bad{background:#e9eef6;color:#071d40}
 .drawer .tr{max-height:46vh;overflow-y:auto;background:#efe7dc;border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:5px;direction:rtl}
 .wapre{background:#efe7dc;border-radius:12px;padding:12px;direction:rtl}
 .wapre .m{max-width:100%}
@@ -186,7 +186,7 @@ table.t input.w{width:100%;text-align:left}
 .howgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;font-size:12.5px;line-height:1.5}
 .howgrid div{background:#f6f6f6;border-radius:10px;padding:10px}
 .flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;font-size:12px}
-.flow span{background:#fdecec;color:#c00000;border-radius:8px;padding:5px 8px;font-weight:600}
+.flow span{background:#e9eef6;color:#071d40;border-radius:8px;padding:5px 8px;font-weight:600}
 @media print{body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:absolute;left:0;top:0;width:100%}body{overflow:visible;background:#fff}}
 @media (max-width:1300px){.cols{grid-template-columns:350px 260px minmax(0,1fr)}.phone{width:320px}.cols.nobrain{grid-template-columns:350px minmax(0,1fr)}}
 
@@ -292,6 +292,7 @@ const CUSTOMERS = {
 const DEMO_PROMPTS = {
   restaurant: [
     { label: 'Order', text: 'مساء الخير، عايزة اتنين كشري كبير وواحد رز بلبن' },
+    { label: 'Note', text: 'ممكن تكتبلي ملاحظة إن الكشري ميكونش حراق؟' },
     { label: 'Address', text: '١٢ شارع عباس العقاد، مدينة نصر' },
     { label: 'Name', text: 'باسم منى' },
     { label: 'Price question', text: 'هو الكشري الكبير بكام؟' },
@@ -463,11 +464,12 @@ function parseDateArg(x) {
 
 // ------------------------------------------------------------- tool declarations
 function toolDecls(biz) {
-  const handover = { name: 'hand_over_to_staff', description: 'Pass the conversation to a human staff member. Use when the answer is not in the approved information, for complaints, cancellations or changes, requests for a manager or a person, or anything sensitive.', parameters: { type: 'OBJECT', properties: { reason: { type: 'STRING', description: 'Short reason in English' }, summary: { type: 'STRING', description: 'One-line summary of what the customer needs, in English' } }, required: ['reason', 'summary'] } };
+  const handover = { name: 'hand_over_to_staff', description: 'Pass the conversation to a human staff member. Use when the answer is not in the approved information, for complaints, cancellations, changes to items or prices of a confirmed order, allergies or health questions, requests for a manager or a person, or anything sensitive. NOT for simple preparation or delivery notes: use the notes field of place_order or add_order_note for those.', parameters: { type: 'OBJECT', properties: { reason: { type: 'STRING', description: 'Short reason in English' }, summary: { type: 'STRING', description: 'One-line summary of what the customer needs, in English' } }, required: ['reason', 'summary'] } };
   const itemsSchema = { type: 'ARRAY', items: { type: 'OBJECT', properties: { item: { type: 'STRING', description: 'Menu item name in Arabic exactly as on the menu' }, size: { type: 'STRING', description: 'Size name from the menu (e.g. كبير). Omit if the item has one size' }, quantity: { type: 'INTEGER' } }, required: ['item', 'quantity'] } };
   if (biz === 'restaurant') return [
     { name: 'quote_order', description: "Calculate the exact price of an order from the owner's menu and the delivery fee. ALWAYS call this before telling the customer any price or total. Never calculate yourself.", parameters: { type: 'OBJECT', properties: { items: itemsSchema, area: { type: 'STRING', description: 'Delivery area if known' }, pickup: { type: 'BOOLEAN', description: 'True if the customer will pick up' } }, required: ['items'] } },
-    { name: 'place_order', description: 'Save a confirmed order and send it to the restaurant staff. Only call after the customer confirmed the items, the delivery address and their name.', parameters: { type: 'OBJECT', properties: { customer_name: { type: 'STRING' }, items: itemsSchema, area: { type: 'STRING' }, address: { type: 'STRING' }, pickup: { type: 'BOOLEAN' }, notes: { type: 'STRING' } }, required: ['customer_name', 'items'] } },
+    { name: 'place_order', description: 'Save a confirmed order and send it to the restaurant staff. Only call after the customer confirmed the items, the delivery address and their name.', parameters: { type: 'OBJECT', properties: { customer_name: { type: 'STRING' }, items: itemsSchema, area: { type: 'STRING' }, address: { type: 'STRING' }, pickup: { type: 'BOOLEAN' }, notes: { type: 'STRING', description: "The customer's simple preparation or delivery notes, in Arabic as they said them (e.g. الحواوشي ميكونش محروق، من غير بصل، رن الجرس). Empty if none." } }, required: ['customer_name', 'items'] } },
+    { name: 'add_order_note', description: "Add a simple preparation or delivery note to this customer's order that was ALREADY placed (e.g. not burnt, no onions, sauce on the side, call on arrival). The note goes to the kitchen on the owner's dashboard. It never changes items or price.", parameters: { type: 'OBJECT', properties: { note: { type: 'STRING', description: 'The note in Arabic, short' } }, required: ['note'] } },
     handover,
   ];
   return [
@@ -495,6 +497,14 @@ function execTool(conv, name, args) {
       log('tool', `Tool <code>place_order</code> → order #${o.id} saved`, "sent to the owner's dashboard"); flashOwner('order', o.id);
       if (conv.channel === 'call') queueConfirmation(conv, `✅ ${R.nameAr}: تم تأكيد طلبك رقم ${toAr(o.id)}\nالإجمالي ${toAr(o.total)} جنيه · التوصيل خلال ${toAr(o.eta)} دقيقة · الدفع كاش عند الاستلام`);
       return { ok: true, order_number: o.id, total: o.total, delivery_minutes: o.eta, payment: R.payment };
+    }
+    if (name === 'add_order_note') {
+      const o = S.orders.find((x) => x.convId === conv.id);
+      if (!o) return { ok: false, instruction: 'No order placed yet in this conversation. Keep the note and pass it in the notes field of place_order.' };
+      const note = String(args.note || '').trim(); if (!note) return { ok: false, problem: 'empty note' };
+      o.notes = o.notes ? o.notes + ' · ' + note : note;
+      log('tool', `Tool <code>add_order_note</code> → note added to order #${o.id}`, note); flashOwner('order', o.id);
+      return { ok: true, order_number: o.id, note: o.notes, instruction: 'Confirm to the customer that the note was added to their order for the kitchen.' };
     }
     if (name === 'check_free_slots') {
       const doc = findDoctor(args.doctor) || C.doctors[0]; const iso = parseDateArg(args.date) || dayInfo(1).iso;
@@ -565,14 +575,16 @@ ${call ? '- This is a live phone call: no emojis, no lists, no symbols. Say numb
 
 WHAT YOU MAY SAY
 - Use ONLY the APPROVED INFORMATION below. Never invent prices, items, times, policies, or anything else.
-- If something is not in the approved information, or the customer complains, wants to cancel or change something, asks for a manager or a person, or asks anything sensitive: call hand_over_to_staff, then tell the customer a team member will follow up.
+- If something is not in the approved information, or the customer complains, wants to cancel or change a confirmed order, asks for a manager or a person, or asks anything sensitive: call hand_over_to_staff, then tell the customer a team member will follow up.
 - Never confirm an order or booking unless the tool returned ok: true.`;
   const flow = biz === 'restaurant'
     ? `
 ORDERS
 - Never calculate prices yourself: call quote_order and use its numbers. If the item has several sizes and the customer did not say, ask which size.
 - Flow: items → quote_order → tell the total and delivery fee → ask the address and area (or pick-up) → ask the name → place_order → confirm with the order number, total, delivery time and payment on delivery.
-- If the customer already gave several details at once, do not ask again.`
+- If the customer already gave several details at once, do not ask again.
+- NOTES ARE NORMAL, NEVER A HANDOVER: simple preparation or delivery requests (مثلاً: الحواوشي ميكونش محروق، مستوي كويس، من غير بصل، الصوص على جنب، رن الجرس، كلمني لما توصل) are just notes for the kitchen. Accept them, repeat the note back in one short sentence, and pass it in the notes field of place_order. If the order is already placed, call add_order_note. Notes never change the price.
+- Hand over only if the request needs an item not on the menu, a price change, or a promise about allergies or health (e.g. gluten-free, allergy): the kitchen must answer those.`
     : `
 BOOKINGS
 - Never give medical advice, diagnosis or medicine names. Offer to book with the right doctor instead.
@@ -706,6 +718,17 @@ function offlineTurn(conv, text) {
       execTool(conv, 'hand_over_to_staff', { reason: 'Not in approved info / needs staff', summary: `Customer asked: "${text}"` });
       return 'سؤال مهم يا فندم، هخلي حد من فريق المطعم يرد على حضرتك هنا حالاً.';
     }
+    const isNote = has('ملاحظه', 'ميكونش', 'مايكونش', 'متكونش', 'ماتكونش', 'حراق', 'محروق', 'مستوي', 'من غير', 'بدون', 'على جنب', 'علي جنب', 'رن الجرس', 'كلمني لما');
+    if (isNote) {
+      let note = text.trim(); const m = note.match(/(?:إن|ان|أن)\s+(.+)$/); if (/ملاحظ/.test(normAr(note)) && m) note = m[1].trim();
+      note = note.replace(/[؟?]+$/, '').trim();
+      if (o.cart && o.cart.length) {
+        o.notes = o.notes ? o.notes + ' · ' + note : note; log('tool', 'Note saved for the order', note);
+        return `حاضر يا فندم، كتبت ملاحظة للمطبخ: "${note}". ${o.stage === 'name' ? 'الطلب باسم مين؟' : 'أوصله على أنهي عنوان؟'}`;
+      }
+      const r = execTool(conv, 'add_order_note', { note });
+      if (r.ok) return `حاضر يا فندم، ضفت الملاحظة على طلبك رقم ${toAr(r.order_number)}: "${note}". المطبخ هيشوفها.`;
+    }
     const items = offlineParseItems(text);
     if (has('بكام', 'سعر', 'كام') && items.length && o.stage !== 'address') {
       const it = findMenuItem(items[0].item); const sz = items[0].size && it.sizes[items[0].size] ? [items[0].size] : Object.keys(it.sizes);
@@ -739,7 +762,7 @@ function offlineTurn(conv, text) {
     }
     if (o.stage === 'name') {
       const name = text.replace(/^(باسم|اسمي|الاسم|انا)\s*/, '').trim() || conv.customer.name;
-      const r = execTool(conv, 'place_order', { customer_name: name, items: o.cart, area: o.area.ar, address: o.address });
+      const r = execTool(conv, 'place_order', { customer_name: name, items: o.cart, area: o.area.ar, address: o.address, notes: o.notes || '' });
       conv.off = { stage: null };
       if (!r.ok) return 'معلش في مشكلة في الطلب، هخلي حد من الفريق يكلم حضرتك.';
       return `تم تأكيد طلبك يا ${name} ✅ رقم الطلب ${toAr(r.order_number)}، الإجمالي ${toAr(r.total)} جنيه، هيوصلك خلال ${toAr(r.delivery_minutes)} دقيقة والدفع كاش عند الاستلام.`;
@@ -841,7 +864,7 @@ function toast(msg, kind) {
   const d = document.createElement('div'); d.className = 'toast' + (kind ? ' ' + kind : ''); d.textContent = msg;
   $('toasts').appendChild(d); setTimeout(() => d.remove(), kind === 'warn' ? 6000 : 3200);
 }
-const LOG_STYLE = { in: ['#25d366', 'W'], call: ['#5f6368', '☎'], hotline: ['#e60000', 'H'], gemini: ['#1a73e8', 'G'], tool: ['#e60000', '⚙'], handover: ['#f29900', '!'], reply: ['#25d366', '✓'], warn: ['#b06000', '!'], owner: ['#25282b', 'O'] };
+const LOG_STYLE = { in: ['#25d366', 'W'], call: ['#5f6368', '☎'], hotline: ['#0b2a5b', 'H'], gemini: ['#1a73e8', 'G'], tool: ['#0b2a5b', '⚙'], handover: ['#f29900', '!'], reply: ['#25d366', '✓'], warn: ['#b06000', '!'], owner: ['#25282b', 'O'] };
 function log(kind, title, sub) {
   S.logs[S.biz].push({ kind, title, sub: sub || '', t: new Date() });
   if (S.logs[S.biz].length > 80) S.logs[S.biz].shift();
@@ -1023,7 +1046,7 @@ function orderCard(o, big) {
     <div class="h"><div><b style="font-size:15px">Order #${o.id}</b> <span class="small">· <bdi>${esc(o.customer)}</bdi> · ${maskPhone(o.phone)} · ${o.channel === 'call' ? '📞 Call' : '💬 WhatsApp'} · ${fmtT12(o.time || new Date(Date.now() - (o.minsAgo || 0) * 60000))}</span></div><span class="tag ${st[0]}">${st[1]}</span></div>
     ${big !== false ? `<div class="lines">${o.lines.map((l) => `<span>${l.qty} × ${esc(l.size && l.size !== 'عادي' ? ({ 'كبير': 'Large', 'وسط': 'Medium', 'صغير': 'Small' }[l.size] || l.size) + ' ' : '')}${esc(l.en.toLowerCase().startsWith('koshary') && l.size !== 'عادي' ? l.en.toLowerCase() : l.en)}</span><span>${egp(l.total)}</span>`).join('')}
       ${o.fee ? `<span>Delivery: ${esc(o.area)}</span><span>${egp(o.fee)}</span>` : ''}<b>Total (cash on delivery)</b><b>${egp(o.total)}</b></div>
-      <div class="small">📍 <bdi>${esc(o.address)}</bdi>${o.notes ? ' · 📝 ' + esc(o.notes) : ''}</div>` : `<div class="small" style="margin-top:4px">${o.lines.map((l) => `${l.qty} × ${esc(l.en)}`).join(', ')} · <b>${egp(o.total)}</b> · ${esc(o.area)}</div>`}
+      <div class="small">📍 <bdi>${esc(o.address)}</bdi></div>${o.notes ? `<div class="small" style="margin-top:4px;padding:6px 8px;background:#FFF4D6;border-radius:6px">📝 Note for the kitchen: <bdi>${esc(o.notes)}</bdi></div>` : ''}` : `<div class="small" style="margin-top:4px">${o.lines.map((l) => `${l.qty} × ${esc(l.en)}`).join(', ')} · <b>${egp(o.total)}</b> · ${esc(o.area)}${o.notes ? ' · 📝 <bdi>' + esc(o.notes) + '</bdi>' : ''}</div>`}
     <div class="acc">${o.status === 'new' ? `<button class="btn red" data-acc="${o.id}">✓ Accept</button>` : o.status === 'prep' ? `<button class="btn" data-out="${o.id}">🛵 Out for delivery</button>` : o.status === 'out' ? `<button class="btn" data-del="${o.id}">Delivered</button>` : ''}
       ${o.convId ? `<button class="btn" data-open="${o.convId}">${o.channel === 'call' ? 'Read call transcript' : 'Open chat'}</button>` : ''}</div></div>`;
 }
@@ -1106,7 +1129,7 @@ function reportsHtml() {
 }
 function reportCard() {
   const M = MONTHLY[S.biz]; const I = S.info[S.biz]; const max = Math.max(...M.bars.map((b) => b[1]));
-  return `<div class="rep"><div class="hd2"><div><div class="k1">Monthly results · ${M.month}</div><div class="k2">${esc(I.name)}, Nasr City</div></div><span class="tag new" style="background:#fdecec;color:#e60000">${M.plan} plan</span></div>
+  return `<div class="rep"><div class="hd2"><div><div class="k1">Monthly results · ${M.month}</div><div class="k2">${esc(I.name)}, Nasr City</div></div><span class="tag new" style="background:#e9eef6;color:#0b2a5b">${M.plan} plan</span></div>
    <div class="grid">${M.kpis.map((k) => `<div class="k"><b>${k.v}</b><span>${k.l}</span></div>`).join('')}</div>
    <div class="small" style="padding:4px 16px 6px">${S.biz === 'restaurant' ? 'Missed calls by hour' : 'Calls by time of day'}</div>
    <div class="bars">${M.bars.map((b) => `<div style="height:${Math.round((b[1] / max) * 100)}%"><span>${b[0]}</span></div>`).join('')}</div>
